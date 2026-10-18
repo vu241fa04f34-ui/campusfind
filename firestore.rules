@@ -1,0 +1,158 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.admin == true ||
+        request.auth.token.email.matches('.*admin@vignan\\.ac\\.in$')
+      );
+    }
+
+    function isAuthority() {
+      return isAuthenticated() && (
+        request.auth.token.authority == true ||
+        request.auth.token.role == 'authority' ||
+        request.auth.token.email.matches('.*(staff|authority)@vignan\\.ac\\.in$')
+      );
+    }
+
+    function isStaffOrAdmin() {
+      return isAdmin() || isAuthority();
+    }
+
+    // Users collection
+    // Regular students can only read and write their own profile; admins can read any profile
+    // Staff authorities CANNOT view all user profiles or manage accounts
+    // Regular students and authorities are strictly prevented from assigning themselves role = 'admin' or 'authority'
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId)
+                    && request.resource.data.uid == request.auth.uid
+                    && (!('role' in request.resource.data) || request.resource.data.role == 'student' || isAdmin());
+      allow update: if (isOwner(userId)
+                    && request.resource.data.uid == resource.data.uid
+                    && (!('role' in request.resource.data) || request.resource.data.role == resource.data.role || isAdmin()))
+                    || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Items collection (Lost & Found listings)
+    match /items/{itemId} {
+      // Anyone (authenticated or public) can browse active item listings
+      allow read: if true;
+
+      // Only authenticated users can create items; ownerUid must match their auth UID
+      allow create: if isAuthenticated()
+                    && request.resource.data.ownerUid == request.auth.uid
+                    && request.resource.data.title is string
+                    && request.resource.data.title.size() > 0
+                    && request.resource.data.title.size() <= 120
+                    && request.resource.data.type in ['lost', 'found']
+                    && request.resource.data.status in ['open', 'pending', 'claimed', 'resolved', 'returned', 'closed']
+                    && request.resource.data.category in [
+                      'Electronics', 'ID Cards', 'Books & Notes', 'Bags',
+                      'Clothing', 'Accessories', 'Keys', 'Water Bottles', 'Other',
+                      'Documents', 'Stationery'
+                    ];
+
+      // Listing owner, Staff Authority, or Admin can update listing status
+      allow update: if (isAuthenticated() && resource.data.ownerUid == request.auth.uid) || isStaffOrAdmin();
+
+      // ONLY Listing owner or full Admin can delete listing (Staff Authorities cannot delete)
+      allow delete: if (isAuthenticated() && resource.data.ownerUid == request.auth.uid) || isAdmin();
+    }
+
+    // Complaints & Reports collection (Student disputes, incorrect info, duplicates)
+    match /complaints/{complaintId} {
+      // Reporter, staff authorities, or admin can read complaints
+      allow read: if isAuthenticated() && (
+        resource.data.reporterUid == request.auth.uid ||
+        isStaffOrAdmin()
+      );
+
+      // Authenticated users can submit a complaint
+      allow create: if isAuthenticated()
+                    && request.resource.data.reporterUid == request.auth.uid
+                    && request.resource.data.description is string
+                    && request.resource.data.description.size() > 0
+                    && request.resource.data.description.size() <= 3000;
+
+      // Staff authorities or Admin can update complaint status and add resolution notes
+      allow update: if isStaffOrAdmin();
+
+      // Admin only can delete complaints
+      allow delete: if isAdmin();
+    }
+
+    // Recovery requests collection (Private claims & verification)
+    match /recoveryRequests/{requestId} {
+      // Only requester, item owner, staff authorities, or admin can view requests
+      allow read: if isAuthenticated() && (
+        resource.data.requesterUid == request.auth.uid ||
+        resource.data.ownerUid == request.auth.uid ||
+        isStaffOrAdmin()
+      );
+
+      // Only authenticated users can create a request, and requesterUid must match
+      allow create: if isAuthenticated()
+                    && request.resource.data.requesterUid == request.auth.uid
+                    && request.resource.data.message is string
+                    && request.resource.data.message.size() > 0
+                    && request.resource.data.message.size() <= 2000
+                    && request.resource.data.status in ['pending', 'accepted', 'declined', 'claimed', 'returned', 'closed'];
+
+      // Item owner can accept/decline; requester can update notes; staff/admin can moderate
+      allow update: if isAuthenticated() && (
+        resource.data.ownerUid == request.auth.uid ||
+        resource.data.requesterUid == request.auth.uid ||
+        isStaffOrAdmin()
+      );
+
+      // Requester or admin can delete claim
+      allow delete: if (isAuthenticated() && resource.data.requesterUid == request.auth.uid) || isAdmin();
+    }
+
+    // Notifications collection (In-app alerts for users)
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    // Conversations & secure messages collection
+    match /conversations/{conversationId} {
+      allow read: if isAuthenticated() && (
+        request.auth.uid in resource.data.participants ||
+        isAdmin()
+      );
+      allow create: if isAuthenticated() && request.auth.uid in request.resource.data.participants;
+      allow update: if isAuthenticated() && (
+        request.auth.uid in resource.data.participants ||
+        isAdmin()
+      );
+      
+      match /messages/{messageId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated() && request.resource.data.senderUid == request.auth.uid;
+      }
+    }
+
+    // Audit logs collection (Moderation & administrative tracking)
+    match /auditLogs/{logId} {
+      allow read: if isStaffOrAdmin();
+      allow create: if isStaffOrAdmin();
+      allow update, delete: if false; // Immutable audit trail
+    }
+  }
+}
