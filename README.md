@@ -36,8 +36,9 @@ CampusFind is a modern, responsive full-stack web application designed for colle
   - Secure deletion with confirmation modal.
   - In-app inbox for incoming claims.
 - **Production Backend & Dual-Mode Architecture**:
+  - **Shared Campus Visibility & Real-Time Sync**: Real-time Firestore `onSnapshot` subscriptions allow newly reported items to instantly populate the Explore feed for all users across the campus without manual page refresh.
   - **Firebase Mode**: Uses Firebase Authentication, Cloud Firestore, and Firebase Storage with production security rules.
-  - **Demo Mode**: Works instantly out of the box with realistic campus demo records and simulated persistence if Firebase keys have not yet been configured.
+  - **Demo & Offline Auto-Sync**: Provides instant fallback with sample records, plus automatic migration of offline local reports to Cloud Firestore upon sign-in.
 
 ---
 
