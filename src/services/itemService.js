@@ -448,8 +448,9 @@ export const itemService = {
       imageUrl = await this.uploadImage(imageFile, currentUser?.uid || null);
     }
 
+    // Photo is mandatory for both Lost and Found reports
     if (!imageUrl) {
-      imageUrl = CATEGORY_DEFAULT_IMAGES[itemData.category] || CATEGORY_DEFAULT_IMAGES.Other;
+      throw new Error('Please upload an item photo before submitting your report.');
     }
 
     const isBlock = isBlockLocation(itemData.location);

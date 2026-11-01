@@ -153,11 +153,24 @@ export function ReportItemForm({ initialType = 'lost', onCancel }) {
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      if (!imageFile) {
+        setErrors((prev) => ({
+          ...prev,
+          image: 'Please upload an item photo before submitting your report.'
+        }));
+      }
+      return;
+    }
 
-    const validation = validateImageFile(file);
+    const validation = validateImageFile(file, true);
     if (!validation.isValid) {
       setErrors((prev) => ({ ...prev, image: validation.error }));
+      setImageFile(null);
+      setImagePreview(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
       return;
     }
 
@@ -177,15 +190,22 @@ export function ReportItemForm({ initialType = 'lost', onCancel }) {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+    setErrors((prev) => ({
+      ...prev,
+      image: 'Please upload an item photo before submitting your report.'
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setServerError('');
 
-    const validation = validateItemForm(formData);
+    const validation = validateItemForm(formData, imageFile);
     if (!validation.isValid) {
       setErrors(validation.errors);
+      if (validation.errors.image) {
+        setServerError('Please upload an item photo before submitting your report.');
+      }
       return;
     }
 
@@ -516,44 +536,70 @@ export function ReportItemForm({ initialType = 'lost', onCancel }) {
         </div>
       )}
 
-      {/* Photo Upload */}
+      {/* Photo Upload (Mandatory) */}
       <div>
         <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-          Item Photo (Optional but recommended)
+          Upload Item Photo (Required) <span className="text-rose-500">*</span>
         </label>
-        <p className="text-xs text-slate-500 mb-2">
-          JPG, PNG, or WebP up to 5 MB.
+        <p className="text-xs text-slate-500 mb-2.5">
+          Please upload a clear photo of the lost or found item. Supported formats: JPG, JPEG, PNG, WebP (Max 5 MB).
         </p>
 
         {imagePreview ? (
-          <div className="relative rounded-2xl overflow-hidden border border-slate-200 max-w-sm">
+          <div className="relative rounded-2xl overflow-hidden border-2 border-emerald-500/50 max-w-sm shadow-md group bg-slate-900">
             <img
               src={imagePreview}
               alt="Item preview"
-              className="w-full h-48 object-cover object-center"
+              className="w-full h-52 object-cover object-center"
             />
-            <button
-              type="button"
-              onClick={removeImage}
-              className="absolute top-2 right-2 p-1.5 rounded-full bg-slate-900/75 text-white hover:bg-rose-600 transition"
-              title="Remove image"
-            >
-              <X className="w-4 h-4" />
-            </button>
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute top-2.5 right-2.5 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="px-2.5 py-1 rounded-xl bg-slate-900/80 hover:bg-emerald-600 text-white text-xs font-semibold backdrop-blur-md transition cursor-pointer"
+                title="Change photo"
+              >
+                Change Photo
+              </button>
+              <button
+                type="button"
+                onClick={removeImage}
+                className="p-1.5 rounded-xl bg-slate-900/80 hover:bg-rose-600 text-white backdrop-blur-md transition cursor-pointer"
+                title="Remove photo"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
+              <span className="text-[11px] font-semibold text-emerald-300 bg-slate-950/80 px-2.5 py-1 rounded-lg backdrop-blur-md truncate max-w-[260px]">
+                ✓ Photo selected ({imageFile?.name || 'Image ready'})
+              </span>
+            </div>
           </div>
         ) : (
           <div
             onClick={() => fileInputRef.current?.click()}
-            className="border-2 border-dashed border-slate-200 hover:border-emerald-500/70 rounded-2xl p-6 text-center cursor-pointer transition bg-slate-50 hover:bg-emerald-50/30 flex flex-col items-center justify-center group"
+            className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition flex flex-col items-center justify-center group ${
+              errors.image
+                ? 'border-rose-400 bg-rose-50/50 hover:bg-rose-50'
+                : 'border-slate-300 hover:border-emerald-500 bg-slate-50 hover:bg-emerald-50/30'
+            }`}
           >
-            <div className="w-12 h-12 rounded-xl bg-slate-100 group-hover:bg-emerald-100 text-slate-500 group-hover:text-emerald-700 flex items-center justify-center mb-2 transition">
+            <div
+              className={`w-12 h-12 rounded-xl flex items-center justify-center mb-2 transition ${
+                errors.image
+                  ? 'bg-rose-100 text-rose-600'
+                  : 'bg-slate-100 group-hover:bg-emerald-100 text-slate-500 group-hover:text-emerald-700'
+              }`}
+            >
               <Upload className="w-6 h-6" />
             </div>
-            <p className="text-xs sm:text-sm font-medium text-slate-700">
-              Click to select or drag and drop a photo
+            <p className="text-xs sm:text-sm font-semibold text-slate-800">
+              Click to select or drag and drop an item photo
             </p>
-            <p className="text-[11px] text-slate-400 mt-0.5">
-              Maximum file size: 5 MB
+            <p className="text-[11px] text-slate-500 mt-1">
+              JPG, JPEG, PNG, or WebP up to 5 MB <span className="text-rose-500 font-bold">(Compulsory)</span>
             </p>
           </div>
         )}
@@ -561,11 +607,17 @@ export function ReportItemForm({ initialType = 'lost', onCancel }) {
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/jpeg,image/png,image/webp"
+          accept="image/jpeg,image/png,image/webp,image/jpg"
           onChange={handleImageChange}
           className="hidden"
         />
-        {errors.image && <p className="text-xs text-rose-600 mt-1">{errors.image}</p>}
+
+        {errors.image && (
+          <div className="flex items-center gap-2 text-xs text-rose-600 mt-2 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200">
+            <AlertCircle className="w-4 h-4 flex-shrink-0 text-rose-500" />
+            <span>{errors.image}</span>
+          </div>
+        )}
       </div>
 
       {/* Security notice */}
