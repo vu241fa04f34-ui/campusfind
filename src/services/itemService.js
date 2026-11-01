@@ -14,7 +14,12 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage, isFirebaseConfigured } from './firebase';
 import { INITIAL_DEMO_ITEMS } from '../utils/demoData';
 import { CAMPUS_LOCATIONS, isBlockLocation } from '../utils/validation';
-import { CATEGORY_DEFAULT_IMAGES, getItemImageUrl } from '../utils/itemImageHelper';
+import {
+  CATEGORY_DEFAULT_IMAGES,
+  getItemImageUrl,
+  compressImageFile,
+  fileToOptimizedDataUrl
+} from '../utils/itemImageHelper';
 
 export { CATEGORY_DEFAULT_IMAGES, getItemImageUrl };
 
@@ -22,9 +27,9 @@ const LOCAL_STORAGE_ITEMS_KEY = 'campusfind_items_cache';
 
 // Initialize local storage demo items if not already present
 function getLocalItems() {
-  const cached = localStorage.getItem(LOCAL_STORAGE_ITEMS_KEY);
-  if (cached) {
-    try {
+  try {
+    const cached = localStorage.getItem(LOCAL_STORAGE_ITEMS_KEY);
+    if (cached) {
       const parsed = JSON.parse(cached);
       // Strip any Stationery item and synchronize demo records with INITIAL_DEMO_ITEMS
       const customReports = parsed
@@ -35,18 +40,21 @@ function getLocalItems() {
       const combined = [...customReports, ...INITIAL_DEMO_ITEMS];
       localStorage.setItem(LOCAL_STORAGE_ITEMS_KEY, JSON.stringify(combined));
       return combined;
-    } catch {
-      // Fallback
     }
+  } catch {
+    // Fallback
   }
   localStorage.setItem(LOCAL_STORAGE_ITEMS_KEY, JSON.stringify(INITIAL_DEMO_ITEMS));
   return [...INITIAL_DEMO_ITEMS];
 }
 
 function saveLocalItems(items) {
-  // Never save Stationery items
-  const clean = items.filter((i) => i.category !== 'Stationery');
-  localStorage.setItem(LOCAL_STORAGE_ITEMS_KEY, JSON.stringify(clean));
+  try {
+    const clean = items.filter((i) => i.category !== 'Stationery');
+    localStorage.setItem(LOCAL_STORAGE_ITEMS_KEY, JSON.stringify(clean));
+  } catch (err) {
+    console.warn('Could not cache items locally:', err);
+  }
 }
 
 export const itemService = {
@@ -73,7 +81,7 @@ export const itemService = {
         );
 
         const firestoreDocs = await Promise.race([fetchPromise, timeoutPromise]);
-        
+
         // Filter out any Stationery items and any demo items from Firestore docs
         const realDocs = firestoreDocs.filter(
           (doc) => doc.category !== 'Stationery' && !doc.isDemo && !doc.isSample && !doc.id?.startsWith('demo-')
@@ -177,21 +185,44 @@ export const itemService = {
 
   /**
    * Get single item by ID
+   * Features instant lookup for sample items and a 4-second timeout race on Firestore.
    */
   async getItemById(id) {
+    if (!id) return null;
+
+    // Instant local/demo lookup
+    if (id.startsWith('demo-') || id.startsWith('local-')) {
+      const items = getLocalItems();
+      const localFound = items.find((item) => item.id === id && item.category !== 'Stationery');
+      if (localFound) return { ...localFound, imageUrl: getItemImageUrl(localFound) };
+      const demoFound = INITIAL_DEMO_ITEMS.find((item) => item.id === id);
+      if (demoFound) return { ...demoFound, imageUrl: getItemImageUrl(demoFound) };
+    }
+
     if (isFirebaseConfigured && db) {
       try {
-        const docRef = doc(db, 'items', id);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          if (data.category !== 'Stationery') {
-            const result = { id: docSnap.id, ...data };
-            return { ...result, imageUrl: getItemImageUrl(result) };
+        const fetchDocPromise = (async () => {
+          const docRef = doc(db, 'items', id);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (data.category !== 'Stationery') {
+              const result = { id: docSnap.id, ...data };
+              return { ...result, imageUrl: getItemImageUrl(result) };
+            }
           }
-        }
+          return null;
+        })();
+
+        // 4-second timeout safety net to prevent hanging indefinitely on Firestore
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Firestore getItemById timeout')), 4000)
+        );
+
+        const found = await Promise.race([fetchDocPromise, timeoutPromise]);
+        if (found) return found;
       } catch (err) {
-        console.warn('Firestore getItemById failed, searching local demo store:', err);
+        console.warn('Firestore getItemById failed or timed out, searching local store:', err);
       }
     }
 
@@ -205,25 +236,65 @@ export const itemService = {
   },
 
   /**
-   * Upload image to Firebase Storage (or dataURL in demo mode)
+   * Upload image to Firebase Storage with automatic compression, timeout, and DataURL fallback.
+   * Guarantees that neither CORS issues, network timeouts, nor bucket initialization errors block report submission.
    */
   async uploadImage(file, userUid) {
     if (!file) return null;
 
-    if (isFirebaseConfigured && storage && userUid) {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
-      const storageRef = ref(storage, `items/${userUid}/${fileName}`);
-      const uploadResult = await uploadBytes(storageRef, file);
-      return await getDownloadURL(uploadResult.ref);
-    } else {
-      // Demo mode: convert to base64 DataURL
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.readAsDataURL(file);
-      });
+    // 1. Compress image client-side to ensure rapid transfers (< 300KB)
+    let processedFile = file;
+    try {
+      processedFile = await compressImageFile(file, 1200, 1200, 0.8);
+    } catch {
+      processedFile = file;
     }
+
+    // 2. If Firebase Storage is configured and user is signed in with a real UID:
+    if (isFirebaseConfigured && storage && userUid && userUid !== 'guest') {
+      try {
+        const fileExt = processedFile.name?.split('.').pop() || 'jpg';
+        const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+        const storageRef = ref(storage, `items/${userUid}/${fileName}`);
+
+        const metadata = {
+          contentType: processedFile.type || 'image/jpeg',
+          customMetadata: {
+            uploadedBy: userUid,
+            app: 'CampusFind'
+          }
+        };
+
+        const uploadPromise = (async () => {
+          const uploadResult = await uploadBytes(storageRef, processedFile, metadata);
+          return await getDownloadURL(uploadResult.ref);
+        })();
+
+        // 6-second timeout race to prevent hanging on Storage CORS errors or network retry loops
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Firebase Storage upload timed out')), 6000)
+        );
+
+        const downloadUrl = await Promise.race([uploadPromise, timeoutPromise]);
+        if (downloadUrl) return downloadUrl;
+      } catch (storageError) {
+        console.warn(
+          '[CampusFind Storage] Cloud Storage upload encountered an issue (CORS, uninitialized bucket, or timeout). ' +
+          'Automatically falling back to optimized inline photo representation so report submission succeeds:',
+          storageError
+        );
+      }
+    }
+
+    // 3. Fallback: Convert to highly-optimized Base64 Data URL (< 150KB) so the report submission NEVER hangs or fails
+    try {
+      const dataUrl = await fileToOptimizedDataUrl(processedFile, 800, 0.75);
+      if (dataUrl) return dataUrl;
+    } catch (fallbackErr) {
+      console.warn('[CampusFind Storage] DataURL conversion failed:', fallbackErr);
+    }
+
+    return null;
   },
 
   /**
@@ -233,7 +304,7 @@ export const itemService = {
     let imageUrl = itemData.imageUrl || null;
 
     if (imageFile) {
-      imageUrl = await this.uploadImage(imageFile, currentUser?.uid || 'guest');
+      imageUrl = await this.uploadImage(imageFile, currentUser?.uid || null);
     }
 
     if (!imageUrl) {
@@ -257,26 +328,44 @@ export const itemService = {
       eventDate: itemData.eventDate,
       imageUrl,
       ownerUid: currentUser?.uid || 'guest',
-      ownerDisplayName: currentUser?.displayName || 'Anonymous Student',
+      ownerDisplayName: currentUser?.displayName || 'Campus Student',
       status: 'open',
       isDemo: !isFirebaseConfigured,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
 
-    if (isFirebaseConfigured && db) {
-      const docRef = await addDoc(collection(db, 'items'), {
-        ...newItem,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
-      });
-      return { id: docRef.id, ...newItem };
-    } else {
-      const localItem = { id: `local-${Date.now()}`, ...newItem };
-      const currentItems = getLocalItems();
-      saveLocalItems([localItem, ...currentItems]);
-      return localItem;
+    if (isFirebaseConfigured && db && currentUser?.uid) {
+      try {
+        const createDocPromise = (async () => {
+          const docRef = await addDoc(collection(db, 'items'), {
+            ...newItem,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          });
+          return { id: docRef.id, ...newItem };
+        })();
+
+        // 6-second timeout safety net
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Firestore addDoc timeout')), 6000)
+        );
+
+        const created = await Promise.race([createDocPromise, timeoutPromise]);
+
+        // Keep local cache in sync
+        const currentItems = getLocalItems();
+        saveLocalItems([created, ...currentItems]);
+        return created;
+      } catch (err) {
+        console.warn('Firestore addDoc failed or timed out, caching report locally:', err);
+      }
     }
+
+    const localItem = { id: `local-${Date.now()}`, ...newItem };
+    const currentItems = getLocalItems();
+    saveLocalItems([localItem, ...currentItems]);
+    return localItem;
   },
 
   /**
@@ -284,16 +373,28 @@ export const itemService = {
    */
   async updateItem(id, updates, _currentUser) {
     if (isFirebaseConfigured && db) {
-      const docRef = doc(db, 'items', id);
-      await updateDoc(docRef, {
-        ...updates,
-        updatedAt: serverTimestamp()
-      });
+      try {
+        const updatePromise = (async () => {
+          const docRef = doc(db, 'items', id);
+          await updateDoc(docRef, {
+            ...updates,
+            updatedAt: serverTimestamp()
+          });
+        })();
+
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Firestore updateItem timeout')), 4000)
+        );
+
+        await Promise.race([updatePromise, timeoutPromise]);
+      } catch (err) {
+        console.warn('Firestore updateItem failed or timed out:', err);
+      }
     }
 
     // Always update local cache
     const currentItems = getLocalItems();
-    const updated = currentItems.map(item => {
+    const updated = currentItems.map((item) => {
       if (item.id === id) {
         return { ...item, ...updates, updatedAt: new Date().toISOString() };
       }
@@ -308,12 +409,24 @@ export const itemService = {
    */
   async deleteItem(id) {
     if (isFirebaseConfigured && db) {
-      const docRef = doc(db, 'items', id);
-      await deleteDoc(docRef);
+      try {
+        const deletePromise = (async () => {
+          const docRef = doc(db, 'items', id);
+          await deleteDoc(docRef);
+        })();
+
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Firestore deleteItem timeout')), 4000)
+        );
+
+        await Promise.race([deletePromise, timeoutPromise]);
+      } catch (err) {
+        console.warn('Firestore deleteItem failed or timed out:', err);
+      }
     }
 
     const currentItems = getLocalItems();
-    saveLocalItems(currentItems.filter(item => item.id !== id));
+    saveLocalItems(currentItems.filter((item) => item.id !== id));
     return true;
   },
 

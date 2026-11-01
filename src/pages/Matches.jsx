@@ -19,7 +19,10 @@ export function Matches() {
   const [filterConfidence, setFilterConfidence] = useState('all');
 
   const loadMatches = async () => {
-    if (!currentUser) return;
+    if (!currentUser) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const results = await matchingService.getAllMatchesForUser(currentUser.uid);

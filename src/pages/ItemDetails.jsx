@@ -54,27 +54,47 @@ export function ItemDetails() {
   const [showComplaintModal, setShowComplaintModal] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     async function loadItemAndRequests() {
       setLoading(true);
       try {
         const found = await itemService.getItemById(id);
+        if (!isMounted) return;
         setItem(found);
         if (found) {
           setDetailImgSrc(getItemImageUrl(found));
-        }
 
-        if (found) {
-          const reqs = await recoveryService.getItemRequests(found.id);
-          setItemRequests(reqs);
+          // Only request private claims if user is logged in as the owner, authority, or admin
+          const isOwnerOrStaff =
+            currentUser &&
+            (currentUser.uid === found.ownerUid ||
+              currentUser.role === 'admin' ||
+              currentUser.role === 'authority');
+
+          if (isOwnerOrStaff) {
+            const reqs = await recoveryService.getItemRequests(found.id, currentUser);
+            if (isMounted) {
+              setItemRequests(reqs || []);
+            }
+          } else {
+            if (isMounted) {
+              setItemRequests([]);
+            }
+          }
         }
       } catch (err) {
         console.error('Error fetching item details:', err);
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     }
     loadItemAndRequests();
-  }, [id]);
+    return () => {
+      isMounted = false;
+    };
+  }, [id, currentUser]);
 
   if (loading) {
     return (

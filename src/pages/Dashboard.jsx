@@ -45,11 +45,16 @@ export function Dashboard() {
   const [isSavingEdit, setIsSavingEdit] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     async function loadDashboardData() {
-      if (!currentUser) return;
-      setLoading(true);
+      if (!currentUser) {
+        if (isMounted) setLoading(false);
+        return;
+      }
+      if (isMounted) setLoading(true);
       try {
         const allItems = await itemService.getItems();
+        if (!isMounted) return;
         // Filter items where owner matches current user
         const userItems = allItems.filter(
           (i) => i.ownerUid === currentUser.uid
@@ -57,15 +62,22 @@ export function Dashboard() {
         setItems(userItems);
 
         const userRequests = await recoveryService.getUserRequests(currentUser.uid);
-        setRequests(userRequests);
+        if (isMounted) {
+          setRequests(userRequests);
+        }
       } catch (err) {
         console.error('Error loading dashboard data:', err);
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     }
 
     loadDashboardData();
+    return () => {
+      isMounted = false;
+    };
   }, [currentUser]);
 
   // Handle Delete
