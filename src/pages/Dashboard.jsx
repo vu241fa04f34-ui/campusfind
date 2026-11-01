@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
   PlusCircle,
@@ -11,7 +11,10 @@ import {
   AlertTriangle,
   X,
   Check,
-  MessageSquare
+  MessageSquare,
+  Upload,
+  AlertCircle,
+  Camera
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { itemService } from '../services/itemService';
@@ -21,7 +24,7 @@ import { LoadingSpinner } from '../components/LoadingSpinner';
 import { LocationSelect } from '../components/LocationSelect';
 import { formatDate } from '../utils/formatDate';
 import { formatItemLocation } from '../utils/formatLocation';
-import { BLOCK_FLOORS, isBlockLocation } from '../utils/validation';
+import { BLOCK_FLOORS, isBlockLocation, validateImageFile } from '../utils/validation';
 import { getItemImageUrl, CATEGORY_DEFAULT_IMAGES } from '../utils/itemImageHelper';
 
 export function Dashboard() {
@@ -42,7 +45,11 @@ export function Dashboard() {
   const [editLocation, setEditLocation] = useState('');
   const [editFloor, setEditFloor] = useState('');
   const [editRoom, setEditRoom] = useState('');
+  const [editImageFile, setEditImageFile] = useState(null);
+  const [editImagePreview, setEditImagePreview] = useState(null);
+  const [editImageError, setEditImageError] = useState('');
   const [isSavingEdit, setIsSavingEdit] = useState(false);
+  const editFileInputRef = useRef(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -104,6 +111,9 @@ export function Dashboard() {
     setEditLocation(item.location);
     setEditFloor(item.floor || '');
     setEditRoom(item.roomNumber || '');
+    setEditImageFile(null);
+    setEditImagePreview(item.imageUrl || getItemImageUrl(item) || null);
+    setEditImageError('');
   };
 
   const handleEditLocationChange = (newLoc) => {
@@ -112,6 +122,26 @@ export function Dashboard() {
       setEditFloor('');
       setEditRoom('');
     }
+  };
+
+  const handleEditImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const validation = validateImageFile(file);
+    if (!validation.isValid) {
+      setEditImageError(validation.error);
+      return;
+    }
+
+    setEditImageError('');
+    setEditImageFile(file);
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setEditImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
 
   // Save Edit
@@ -129,6 +159,14 @@ export function Dashboard() {
         floor: isBlock ? (editFloor.trim() || null) : null,
         roomNumber: isBlock ? (editRoom.trim() || null) : null
       };
+
+      // If user replaced photo, upload new image to Firebase Storage
+      if (editImageFile) {
+        const uploadedUrl = await itemService.uploadImage(editImageFile, currentUser?.uid);
+        if (uploadedUrl) {
+          updatedFields.imageUrl = uploadedUrl;
+        }
+      }
 
       await itemService.updateItem(
         editItem.id,
@@ -573,6 +611,59 @@ export function Dashboard() {
                   </div>
                 </div>
               )}
+
+              {/* Item Photo */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                  Item Photo
+                </label>
+                {editImagePreview ? (
+                  <div className="relative rounded-xl overflow-hidden border border-slate-200 w-full max-w-xs h-36 bg-slate-900 group">
+                    <img
+                      src={editImagePreview}
+                      alt="Item preview"
+                      className="w-full h-full object-cover object-center"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => editFileInputRef.current?.click()}
+                      className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white text-xs font-semibold cursor-pointer"
+                    >
+                      <Camera className="w-4 h-4 text-emerald-400" />
+                      <span>Replace Photo</span>
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => editFileInputRef.current?.click()}
+                    className="w-full py-3 px-4 border-2 border-dashed border-slate-200 hover:border-emerald-500 rounded-xl text-xs font-semibold text-slate-600 hover:text-emerald-700 flex items-center justify-center gap-2 bg-slate-50 transition"
+                  >
+                    <Upload className="w-4 h-4 text-slate-400" />
+                    <span>Upload Replacement Photo</span>
+                  </button>
+                )}
+
+                <input
+                  ref={editFileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png,image/webp"
+                  onChange={handleEditImageChange}
+                  className="hidden"
+                />
+
+                {editImageError && (
+                  <p className="text-xs font-semibold text-rose-600 mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                    <span>{editImageError}</span>
+                  </p>
+                )}
+                {editImageFile && (
+                  <p className="text-[11px] text-emerald-700 font-medium mt-1">
+                    ✓ New photo selected: {editImageFile.name}
+                  </p>
+                )}
+              </div>
 
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">

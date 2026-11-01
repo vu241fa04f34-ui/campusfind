@@ -72,7 +72,7 @@ export function validatePassword(password) {
   return typeof password === 'string' && password.length >= 6;
 }
 
-export function validateItemForm(data, imageFile) {
+export function validateItemForm(data, imageFile = null) {
   const errors = {};
 
   if (!data.title || !data.title.trim()) {
@@ -122,11 +122,11 @@ export function validateItemForm(data, imageFile) {
     errors.description = 'Description exceeds maximum allowed length of 1500 characters';
   }
 
-  // Photo upload is compulsory for both Lost and Found reports
-  if (!imageFile && !data.imageUrl) {
+  // Mandatory item photo validation for both Lost and Found reports
+  if (!imageFile && !data?.imageUrl) {
     errors.image = 'Please upload an item photo before submitting your report.';
   } else if (imageFile) {
-    const imgCheck = validateImageFile(imageFile, true);
+    const imgCheck = validateImageFile(imageFile);
     if (!imgCheck.isValid) {
       errors.image = imgCheck.error;
     }
@@ -164,38 +164,25 @@ export function checkSensitiveInfoWarning(text) {
 }
 
 /**
- * Validates uploaded image file size, format and emptiness
+ * Validates uploaded image file existence, size, and format (JPG, JPEG, PNG, WEBP)
  */
-export function validateImageFile(file, isRequired = true) {
+export function validateImageFile(file) {
   if (!file) {
-    if (isRequired) {
-      return {
-        isValid: false,
-        error: 'Please upload an item photo before submitting your report.'
-      };
-    }
-    return { isValid: true };
-  }
-
-  // Reject zero-byte or corrupted files
-  if (file.size === 0) {
     return {
       isValid: false,
-      error: 'The selected image file is empty or corrupted. Please select a valid photo.'
+      error: 'Please upload an item photo before submitting your report.'
     };
   }
 
-  const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
-  const fileExt = file.name ? file.name.split('.').pop().toLowerCase() : '';
-  const validExts = ['jpg', 'jpeg', 'png', 'webp'];
+  const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+  const fileType = file.type?.toLowerCase() || '';
+  const fileName = file.name?.toLowerCase() || '';
+  const hasValidExtension = /\.(jpe?g|png|webp)$/i.test(fileName);
 
-  const hasValidMime = validTypes.includes(file.type);
-  const hasValidExtension = validExts.includes(fileExt);
-
-  if (!hasValidMime && !hasValidExtension) {
+  if (!validTypes.includes(fileType) && !hasValidExtension) {
     return {
       isValid: false,
-      error: 'Unsupported image format. Please upload a clear photo in JPG, JPEG, PNG, or WebP format.'
+      error: 'Unsupported image format. Please upload a clear JPG, JPEG, PNG, or WebP photo.'
     };
   }
 
@@ -203,7 +190,7 @@ export function validateImageFile(file, isRequired = true) {
   if (file.size > maxSizeInBytes) {
     return {
       isValid: false,
-      error: 'Image file size is too large (max 5 MB). Please select a smaller photo.'
+      error: 'Image file size is too large (maximum allowed size is 5 MB). Please choose a smaller photo.'
     };
   }
 

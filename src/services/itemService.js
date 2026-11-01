@@ -14,7 +14,7 @@ import {
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage, isFirebaseConfigured } from './firebase.js';
 import { INITIAL_DEMO_ITEMS } from '../utils/demoData.js';
-import { CAMPUS_LOCATIONS, isBlockLocation } from '../utils/validation.js';
+import { CAMPUS_LOCATIONS, isBlockLocation, validateImageFile } from '../utils/validation.js';
 import {
   CATEGORY_DEFAULT_IMAGES,
   getItemImageUrl,
@@ -439,18 +439,27 @@ export const itemService = {
   },
 
   /**
-   * Creates a new lost/found item
+   * Creates a new lost/found item.
+   * Uploading an item photo is mandatory for all reports.
    */
   async createItem(itemData, imageFile, currentUser) {
+    // 1. Mandatory image enforcement
+    if (!imageFile && !itemData.imageUrl) {
+      throw new Error('Please upload an item photo before submitting your report.');
+    }
+
     let imageUrl = itemData.imageUrl || null;
 
     if (imageFile) {
+      const validation = validateImageFile(imageFile);
+      if (!validation.isValid) {
+        throw new Error(validation.error);
+      }
       imageUrl = await this.uploadImage(imageFile, currentUser?.uid || null);
     }
 
-    // Photo is mandatory for both Lost and Found reports
     if (!imageUrl) {
-      throw new Error('Please upload an item photo before submitting your report.');
+      throw new Error('Failed to process or upload item photo. Please try uploading again.');
     }
 
     const isBlock = isBlockLocation(itemData.location);
