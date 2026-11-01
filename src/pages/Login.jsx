@@ -14,11 +14,13 @@ import {
   Check,
   Edit3,
   X,
-  ChevronDown
+  ChevronDown,
+  Sparkles
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { validateEmail } from '../utils/validation';
 import { authService } from '../services/authService';
+import { BackpackIntro } from '../components/BackpackIntro';
 
 // Supported country codes for Mobile OTP
 const COUNTRY_CODES = [
@@ -46,6 +48,19 @@ export function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const redirectPath = location.state?.from?.pathname || '/';
+
+  // 3D Intro Animation State: Shown when arriving at root '/' while signed out
+  const [showIntro, setShowIntro] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      if (searchParams.get('intro') === 'true' || searchParams.get('intro') === '1') {
+        return true;
+      }
+      const hasPassed = sessionStorage.getItem('campusfind_intro_passed');
+      return (window.location.pathname === '/' || window.location.pathname === '') && !hasPassed;
+    }
+    return false;
+  });
 
   // Auth Modes & State
   const [activeTab, setActiveTab] = useState('phone'); // 'phone' | 'email'
@@ -288,50 +303,71 @@ VITE_FIREBASE_APP_ID=your_app_id`;
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center p-4 sm:p-6 lg:p-8 overflow-hidden bg-slate-950">
-      {/* Background Campus Image with graceful fallback */}
-      {!bgFailed && (
-        <img
-          src={CAMPUS_BG_IMAGE}
-          alt="Vignan University Campus"
-          onError={() => setBgFailed(true)}
-          className="absolute inset-0 w-full h-full object-cover object-center scale-105 transition-transform duration-1000 ease-out"
+    <>
+      {showIntro && (
+        <BackpackIntro
+          onGetStarted={() => {
+            sessionStorage.setItem('campusfind_intro_passed', 'true');
+            setShowIntro(false);
+          }}
         />
       )}
 
-      {/* Fallback CSS gradient if image fails or before load */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-emerald-950/80 to-slate-900 pointer-events-none" />
+      <div className="min-h-screen relative flex items-center justify-center p-4 sm:p-6 lg:p-8 overflow-hidden bg-slate-950">
+        {/* Background Campus Image with graceful fallback */}
+        {!bgFailed && (
+          <img
+            src={CAMPUS_BG_IMAGE}
+            alt="Vignan University Campus"
+            onError={() => setBgFailed(true)}
+            className="absolute inset-0 w-full h-full object-cover object-center scale-105 transition-transform duration-1000 ease-out"
+          />
+        )}
 
-      {/* Dark Translucent Overlay to maintain high readability and contrast */}
-      <div className="absolute inset-0 bg-slate-950/75 backdrop-blur-[2px] pointer-events-none" />
+        {/* Fallback CSS gradient if image fails or before load */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-emerald-950/80 to-slate-900 pointer-events-none" />
 
-      {/* Subtle decorative glow accents */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
+        {/* Dark Translucent Overlay to maintain high readability and contrast */}
+        <div className="absolute inset-0 bg-slate-950/75 backdrop-blur-[2px] pointer-events-none" />
 
-      {/* Invisible reCAPTCHA container for Firebase Phone Auth */}
-      <div id="recaptcha-container"></div>
+        {/* Subtle decorative glow accents */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Clean Centered Login Card */}
-      <div className="relative z-10 w-full max-w-md mx-auto my-8">
-        <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-white/40 p-6 sm:p-8 space-y-6">
-          {/* Header & Branding */}
-          <div className="text-center space-y-2">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-600/30 mx-auto text-white">
-              <Compass className="w-7 h-7" />
+        {/* Invisible reCAPTCHA container for Firebase Phone Auth */}
+        <div id="recaptcha-container"></div>
+
+        {/* Clean Centered Login Card */}
+        <div className="relative z-10 w-full max-w-md mx-auto my-8">
+          <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-white/40 p-6 sm:p-8 space-y-6">
+            {/* Header & Branding */}
+            <div className="text-center space-y-2">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-600/30 mx-auto text-white">
+                <Compass className="w-7 h-7" />
+              </div>
+
+              <div className="space-y-1">
+                <div className="flex items-center justify-center gap-2">
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                    CampusFind
+                  </h1>
+                  <button
+                    type="button"
+                    onClick={() => setShowIntro(true)}
+                    title="Replay the 3D Backpack Intro animation"
+                    className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-colors cursor-pointer shadow-2xs"
+                  >
+                    <Sparkles className="w-3 h-3 text-emerald-600" />
+                    <span>3D Intro</span>
+                  </button>
+                </div>
+                <p className="text-sm font-semibold text-emerald-700">
+                  Lost something? Find it on campus.
+                </p>
+                <p className="text-xs text-slate-500">
+                  Vignan University, Guntur • Student Portal
+                </p>
+              </div>
             </div>
-
-            <div className="space-y-1">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                CampusFind
-              </h1>
-              <p className="text-sm font-semibold text-emerald-700">
-                Lost something? Find it on campus.
-              </p>
-              <p className="text-xs text-slate-500">
-                Vignan University, Guntur • Student Portal
-              </p>
-            </div>
-          </div>
 
           {/* Error Alert */}
           {error && (
@@ -738,5 +774,6 @@ VITE_FIREBASE_APP_ID=your_app_id`}
         </div>
       )}
     </div>
-  );
+  </>
+);
 }
