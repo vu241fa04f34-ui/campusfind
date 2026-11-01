@@ -53,6 +53,7 @@ export function Dashboard() {
       }
       if (isMounted) setLoading(true);
       try {
+        await itemService.syncLocalItemsToFirestore(currentUser);
         const allItems = await itemService.getItems();
         if (!isMounted) return;
         // Filter items where owner matches current user

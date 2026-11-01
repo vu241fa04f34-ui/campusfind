@@ -8,6 +8,7 @@ import {
   deleteDoc,
   query,
   orderBy,
+  onSnapshot,
   serverTimestamp
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -61,10 +62,24 @@ function saveLocalItems(items) {
   }
 }
 
+// Safely parses timestamps whether from Firestore Timestamp, milliseconds, or ISO strings
+function getItemTimestamp(item) {
+  if (!item) return 0;
+  const val = item.createdAt || item.eventDate;
+  if (!val) return 0;
+  if (typeof val === 'object') {
+    if (typeof val.toDate === 'function') return val.toDate().getTime();
+    if (typeof val.seconds === 'number') return val.seconds * 1000;
+  }
+  const parsed = new Date(val).getTime();
+  return isNaN(parsed) ? 0 : parsed;
+}
+
 export const itemService = {
   /**
    * Fetches all items with optional filters.
-   * Guarantees sample items for all categories are displayed and never hangs on Firestore.
+   * Guarantees all student reports across campus are retrieved,
+   * includes local unsynced reports if any, and merges demo items.
    */
   async getItems(filters = {}) {
     let items = [];
@@ -72,11 +87,20 @@ export const itemService = {
     if (isFirebaseConfigured && db) {
       try {
         const fetchPromise = (async () => {
-          const q = collection(db, 'items');
-          const constraints = [];
-          constraints.push(orderBy('createdAt', filters.sort === 'oldest' ? 'asc' : 'desc'));
-          const querySnapshot = await getDocs(query(q, ...constraints));
-          return querySnapshot.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
+          let docs = [];
+          try {
+            const q = query(
+              collection(db, 'items'),
+              orderBy('createdAt', filters.sort === 'oldest' ? 'asc' : 'desc')
+            );
+            const querySnapshot = await getDocs(q);
+            docs = querySnapshot.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
+          } catch (queryErr) {
+            console.warn('[CampusFind] Firestore query with orderBy failed, falling back to unconstrained query:', queryErr);
+            const rawSnap = await getDocs(collection(db, 'items'));
+            docs = rawSnap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
+          }
+          return docs;
         })();
 
         // 5-second timeout safety net to prevent hanging on Firestore network delay
@@ -91,10 +115,19 @@ export const itemService = {
           (doc) => doc.category !== 'Stationery' && !doc.isDemo && !doc.isSample && !doc.id?.startsWith('demo-')
         );
 
+        // Include any unsynced local reports (local-*) that are not yet in Firestore
+        const localItems = getLocalItems();
+        const pendingLocalReports = localItems.filter(
+          (li) => li.id?.startsWith('local-') && !realDocs.some((rd) => rd.title === li.title && rd.ownerUid === li.ownerUid)
+        );
+
         // Merge real student reports with INITIAL_DEMO_ITEMS so all categories have sample representation
-        items = [...realDocs, ...INITIAL_DEMO_ITEMS];
+        items = [...pendingLocalReports, ...realDocs, ...INITIAL_DEMO_ITEMS];
       } catch (err) {
-        console.warn('Firestore fetch failed or timed out, falling back to local dataset:', err);
+        console.warn(
+          '[CampusFind] Firestore fetch failed or timed out. If Cloud Firestore is disabled, please enable it in Firebase Console: https://console.firebase.google.com/project/campusfind-86f7a/firestore. Falling back to local dataset:',
+          err
+        );
         items = getLocalItems();
       }
     } else {
@@ -138,12 +171,116 @@ export const itemService = {
 
     // Sort items
     items.sort((a, b) => {
-      const dateA = new Date(a.createdAt || a.eventDate || 0).getTime();
-      const dateB = new Date(b.createdAt || b.eventDate || 0).getTime();
+      const dateA = getItemTimestamp(a);
+      const dateB = getItemTimestamp(b);
       return filters.sort === 'oldest' ? dateA - dateB : dateB - dateA;
     });
 
     return items;
+  },
+
+  /**
+   * Real-time subscription to published items using Firestore onSnapshot.
+   * Guarantees that when User A reports an item, User B immediately sees it without page refresh.
+   */
+  subscribeToItems(callback, filters = {}) {
+    if (!isFirebaseConfigured || !db) {
+      this.getItems(filters).then(callback).catch(() => callback([]));
+      return () => {};
+    }
+
+    try {
+      const colRef = collection(db, 'items');
+
+      const unsubscribe = onSnapshot(
+        colRef,
+        (snapshot) => {
+          try {
+            const firestoreDocs = snapshot.docs.map((docSnap) => ({
+              id: docSnap.id,
+              ...docSnap.data()
+            }));
+
+            // Filter out stationery or demo records in Firestore
+            const realDocs = firestoreDocs.filter(
+              (doc) => doc.category !== 'Stationery' && !doc.isDemo && !doc.isSample && !doc.id?.startsWith('demo-')
+            );
+
+            // Include any unsynced local reports
+            const localItems = getLocalItems();
+            const pendingLocalReports = localItems.filter(
+              (li) => li.id?.startsWith('local-') && !realDocs.some((rd) => rd.title === li.title && rd.ownerUid === li.ownerUid)
+            );
+
+            let allItems = [...pendingLocalReports, ...realDocs, ...INITIAL_DEMO_ITEMS];
+            allItems = allItems.filter((i) => i.category !== 'Stationery');
+
+            // Apply sorting
+            allItems.sort((a, b) => {
+              const dateA = getItemTimestamp(a);
+              const dateB = getItemTimestamp(b);
+              return filters.sort === 'oldest' ? dateA - dateB : dateB - dateA;
+            });
+
+            callback(allItems);
+          } catch (snapshotErr) {
+            console.error('[CampusFind] Error processing Firestore item snapshot:', snapshotErr);
+          }
+        },
+        (error) => {
+          console.warn('[CampusFind] Firestore onSnapshot error, falling back to getItems:', error);
+          this.getItems(filters).then(callback).catch(() => callback([]));
+        }
+      );
+
+      return unsubscribe;
+    } catch (err) {
+      console.warn('[CampusFind] Failed to attach onSnapshot listener:', err);
+      this.getItems(filters).then(callback).catch(() => callback([]));
+      return () => {};
+    }
+  },
+
+  /**
+   * Automatically migrates any locally-cached reports to Cloud Firestore
+   * once the database is active and the user is authenticated.
+   */
+  async syncLocalItemsToFirestore(currentUser) {
+    if (!isFirebaseConfigured || !db || !currentUser?.uid) return;
+
+    try {
+      const local = getLocalItems();
+      const pendingItems = local.filter(
+        (i) => i.id?.startsWith('local-') && i.ownerUid === currentUser.uid
+      );
+
+      if (pendingItems.length === 0) return;
+
+      console.info(`[CampusFind] Found ${pendingItems.length} unsynced local report(s). Syncing to Cloud Firestore...`);
+
+      for (const item of pendingItems) {
+        const { id, ...itemData } = item;
+        try {
+          const docRef = await addDoc(collection(db, 'items'), {
+            ...itemData,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          });
+
+          // Replace local item with the synchronized Firestore document
+          const currentItems = getLocalItems();
+          const filtered = currentItems.filter((i) => i.id !== id);
+          saveLocalItems([{ id: docRef.id, ...itemData }, ...filtered]);
+          console.info(`[CampusFind] Successfully migrated report "${item.title}" to Firestore doc ${docRef.id}`);
+        } catch (syncErr) {
+          console.warn(`[CampusFind] Failed to sync local report "${item.title}" to Firestore:`, syncErr);
+          // If Firestore is still unavailable, stop iteration and try again later
+          break;
+        }
+      }
+    } catch (err) {
+      console.warn('[CampusFind] syncLocalItemsToFirestore error:', err);
+    }
   },
 
   getLocalFilteredItems(filters = {}) {
@@ -350,19 +487,25 @@ export const itemService = {
           return { id: docRef.id, ...newItem };
         })();
 
-        // 6-second timeout safety net
+        // 7-second timeout safety net
         const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Firestore addDoc timeout')), 6000)
+          setTimeout(() => reject(new Error('Firestore addDoc timeout')), 7000)
         );
 
         const created = await Promise.race([createDocPromise, timeoutPromise]);
 
         // Keep local cache in sync
         const currentItems = getLocalItems();
-        saveLocalItems([created, ...currentItems]);
+        saveLocalItems([created, ...currentItems.filter((i) => i.id !== created.id)]);
         return created;
       } catch (err) {
-        console.warn('Firestore addDoc failed or timed out, caching report locally:', err);
+        console.warn(
+          '[CampusFind Firestore] Cloud Firestore document creation failed. ' +
+          'If Cloud Firestore database is not initialized in Firebase Console, please visit ' +
+          'https://console.firebase.google.com/project/campusfind-86f7a/firestore to create it. ' +
+          'Caching report locally for now:',
+          err
+        );
       }
     }
 

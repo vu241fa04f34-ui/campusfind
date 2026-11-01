@@ -14,9 +14,11 @@ import { ItemCard } from '../components/ItemCard';
 import { EmptyState } from '../components/EmptyState';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { itemService } from '../services/itemService';
+import { useAuth } from '../hooks/useAuth';
 import { CAMPUS_LOCATIONS } from '../utils/validation';
 
 export function Home() {
+  const { currentUser } = useAuth();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
@@ -28,43 +30,44 @@ export function Home() {
     sort: 'newest'
   });
 
-  // Load items with safety timeout to ensure loading state never hangs
+  // Automatically sync any pending local reports to Cloud Firestore when user is authenticated
+  useEffect(() => {
+    if (currentUser?.uid) {
+      itemService.syncLocalItemsToFirestore(currentUser);
+    }
+  }, [currentUser]);
+
+  // Load items with real-time Firestore synchronization and safety timeout
   useEffect(() => {
     let isMounted = true;
+    setLoading(true);
+    setLoadError(null);
+
     const safetyTimer = setTimeout(() => {
       if (isMounted) {
         setLoading(false);
       }
     }, 4500);
 
-    async function loadData() {
-      setLoading(true);
-      setLoadError(null);
-      try {
-        const data = await itemService.getItems({ sort: filters.sort });
-        if (isMounted) {
-          setItems(data);
-        }
-      } catch (err) {
-        console.error('Failed to fetch items:', err);
-        if (isMounted) {
-          setLoadError('Notice: Displaying campus sample records.');
-          setItems(itemService.getLocalFilteredItems({ sort: filters.sort }));
-        }
-      } finally {
+    const unsubscribe = itemService.subscribeToItems(
+      (data) => {
         if (isMounted) {
           clearTimeout(safetyTimer);
+          setItems(data);
           setLoading(false);
         }
-      }
-    }
-    loadData();
+      },
+      { sort: filters.sort }
+    );
 
     return () => {
       isMounted = false;
       clearTimeout(safetyTimer);
+      if (typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
     };
-  }, [filters.sort]); // Re-fetch on sort change
+  }, [filters.sort]);
 
   // Synchronized counts for tabs
   const typeCounts = useMemo(() => {

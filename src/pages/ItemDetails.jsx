@@ -125,7 +125,7 @@ export function ItemDetails() {
     );
   }
 
-  const isOwner = currentUser && (currentUser.uid === item.ownerUid || currentUser.displayName === item.ownerDisplayName);
+  const isOwner = Boolean(currentUser && item.ownerUid && currentUser.uid === item.ownerUid);
   const existingUserClaim = currentUser && !isOwner && itemRequests.find((r) => r.requesterUid === currentUser.uid);
 
   const handleClaimSubmit = async (e) => {
