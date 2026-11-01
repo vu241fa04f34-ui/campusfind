@@ -11,15 +11,15 @@ import {
   serverTimestamp
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage, isFirebaseConfigured } from './firebase';
-import { INITIAL_DEMO_ITEMS } from '../utils/demoData';
-import { CAMPUS_LOCATIONS, isBlockLocation } from '../utils/validation';
+import { db, storage, isFirebaseConfigured } from './firebase.js';
+import { INITIAL_DEMO_ITEMS } from '../utils/demoData.js';
+import { CAMPUS_LOCATIONS, isBlockLocation } from '../utils/validation.js';
 import {
   CATEGORY_DEFAULT_IMAGES,
   getItemImageUrl,
   compressImageFile,
   fileToOptimizedDataUrl
-} from '../utils/itemImageHelper';
+} from '../utils/itemImageHelper.js';
 
 export { CATEGORY_DEFAULT_IMAGES, getItemImageUrl };
 
@@ -27,33 +27,37 @@ const LOCAL_STORAGE_ITEMS_KEY = 'campusfind_items_cache';
 
 // Initialize local storage demo items if not already present
 function getLocalItems() {
-  try {
-    const cached = localStorage.getItem(LOCAL_STORAGE_ITEMS_KEY);
-    if (cached) {
-      const parsed = JSON.parse(cached);
-      // Strip any Stationery item and synchronize demo records with INITIAL_DEMO_ITEMS
-      const customReports = parsed
-        .filter(
-          (i) => !i.isDemo && !i.isSample && !i.id?.startsWith('demo-') && i.category !== 'Stationery'
-        )
-        .map((i) => ({ ...i, imageUrl: getItemImageUrl(i) }));
-      const combined = [...customReports, ...INITIAL_DEMO_ITEMS];
-      localStorage.setItem(LOCAL_STORAGE_ITEMS_KEY, JSON.stringify(combined));
-      return combined;
+  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+    try {
+      const cached = localStorage.getItem(LOCAL_STORAGE_ITEMS_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        // Strip any Stationery item and synchronize demo records with INITIAL_DEMO_ITEMS
+        const customReports = parsed
+          .filter(
+            (i) => !i.isDemo && !i.isSample && !i.id?.startsWith('demo-') && i.category !== 'Stationery'
+          )
+          .map((i) => ({ ...i, imageUrl: getItemImageUrl(i) }));
+        const combined = [...customReports, ...INITIAL_DEMO_ITEMS];
+        localStorage.setItem(LOCAL_STORAGE_ITEMS_KEY, JSON.stringify(combined));
+        return combined;
+      }
+      localStorage.setItem(LOCAL_STORAGE_ITEMS_KEY, JSON.stringify(INITIAL_DEMO_ITEMS));
+    } catch {
+      // Fallback
     }
-  } catch {
-    // Fallback
   }
-  localStorage.setItem(LOCAL_STORAGE_ITEMS_KEY, JSON.stringify(INITIAL_DEMO_ITEMS));
   return [...INITIAL_DEMO_ITEMS];
 }
 
 function saveLocalItems(items) {
-  try {
-    const clean = items.filter((i) => i.category !== 'Stationery');
-    localStorage.setItem(LOCAL_STORAGE_ITEMS_KEY, JSON.stringify(clean));
-  } catch (err) {
-    console.warn('Could not cache items locally:', err);
+  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+    try {
+      const clean = items.filter((i) => i.category !== 'Stationery');
+      localStorage.setItem(LOCAL_STORAGE_ITEMS_KEY, JSON.stringify(clean));
+    } catch (err) {
+      console.warn('Could not cache items locally:', err);
+    }
   }
 }
 

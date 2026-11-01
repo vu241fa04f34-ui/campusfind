@@ -72,16 +72,16 @@ exports.chatAssistant = functions.https.onRequest(async (req, res) => {
   }
 
   try {
-    // 1. Ask Gemini to extract query parameters
+    // 1. Ask Gemini to extract query parameters and intent
     const extractPrompt = `
-You are an entity extractor for a university campus Lost and Found system called CampusFind.
+You are an intent and entity extractor for a university campus Lost and Found system called CampusFind.
 Analyze this user query: "${userMessage}"
 Categories: Electronics, Documents, Books & Notes, Accessories, Clothing, Bags, Other.
-Common Locations: Central Library, Student Union Building, Science Complex, Engineering Hall, Campus Cafeteria, Recreation Center, Main Quad, Bus Terminal.
+Common Locations: Central Library, A-Block, U-Block, H-Block, MHP Canteen, Main Ground, Basketball Ground.
 
 Return a valid JSON object ONLY with this exact shape:
 {
-  "intent": "search" | "report_guide" | "safety" | "general",
+  "intent": "search" | "report_guide" | "technical_support" | "knowledge_general",
   "itemType": "lost" | "found" | "all",
   "category": string or null,
   "location": string or null,
@@ -114,11 +114,11 @@ Return a valid JSON object ONLY with this exact shape:
       }
     }
 
-    // 2. Query Firestore (strictly public fields from /items collection)
+    // 2. Query Firestore if query is an item search
     let matchedItems = [];
-    if (parsed.intent === 'search' || parsed.intent === 'general') {
+    if (parsed.intent === 'search') {
       let queryRef = db.collection('items').limit(20);
-      
+
       if (parsed.itemType && parsed.itemType !== 'all') {
         queryRef = queryRef.where('type', '==', parsed.itemType);
       }
@@ -142,7 +142,6 @@ Return a valid JSON object ONLY with this exact shape:
         };
       });
 
-      // Simple scoring for keyword overlap
       const kws = (parsed.keywords || []).map(k => k.toLowerCase());
       if (kws.length > 0) {
         matchedItems = rawList.filter(item => {
@@ -154,19 +153,21 @@ Return a valid JSON object ONLY with this exact shape:
       }
     }
 
-    // 3. Ask Gemini to write conversational response
+    // 3. Ask Gemini to write dynamic conversational response
     const summarizePrompt = `
-You are the CampusFind AI Assistant. A student asked: "${userMessage}".
-Matching listings found in database (${matchedItems.length}):
+You are the official CampusFind AI Assistant at Vignan University.
+The user asked: "${userMessage}".
+Intent classified: ${parsed.intent}.
+Matching physical listings found in campus database (${matchedItems.length}):
 ${JSON.stringify(matchedItems.map(i => ({ title: i.title, type: i.type, location: i.location, status: i.status })))}
 
 Instructions:
-- Be concise, helpful, friendly, and professional.
-- State whether any matching records were found.
-- If items were found, invite the student to view the details cards below to check ownership.
-- Never invent listings that are not in the provided database list.
-- Treat matches as possibilities, not guaranteed identification.
-- If no items were found, guide them to report their item on the Report page.
+- Be concise, natural, professional, and friendly.
+- If the question is about general knowledge (e.g., "What is artificial intelligence?"), answer it accurately and informatively, then add a polite mention that you can also help with campus lost and found items.
+- If the user asks for technical help (image upload, phone OTP login, password reset), give clear step-by-step instructions.
+- If the user is searching for an item, report whether any matching records were found in the database. Never invent fake items.
+- If matching items were found, invite them to check the cards below.
+- If no items were found and they were looking for a physical belonging, suggest reporting it on the Report page.
 `;
 
     const summaryResp = await fetch(
@@ -180,7 +181,7 @@ Instructions:
       }
     );
 
-    let reply = "I've checked our campus lost and found records for your inquiry.";
+    let reply = "I've checked our campus records and guidelines for your inquiry.";
     if (summaryResp.ok) {
       const data = await summaryResp.json();
       reply = data.candidates?.[0]?.content?.parts?.[0]?.text || reply;
@@ -190,7 +191,7 @@ Instructions:
       configured: true,
       reply,
       matchedItems,
-      quickReplies: ['Show recently found items', 'How do I report an item?', 'Campus safety tips']
+      quickReplies: ['Browse all items', 'How do I report an item?', 'Campus safety tips']
     });
 
   } catch (err) {

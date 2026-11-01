@@ -9,7 +9,47 @@ import { getItemImageUrl, CATEGORY_DEFAULT_IMAGES } from '../utils/itemImageHelp
 export function ChatMessage({ message, onQuickReply, onNavigate }) {
   const isUser = message.sender === 'user';
 
-  // Helper to format text with links and bold words
+  // Helper to format inline markdown (bold, code, links)
+  const formatInlineStyles = (content, isUserMsg) => {
+    if (typeof content !== 'string') return content;
+
+    // Split by **bold** tokens
+    const boldParts = content.split(/(\*\*.*?\*\*)/g);
+    return boldParts.map((bToken, bIdx) => {
+      if (bToken.startsWith('**') && bToken.endsWith('**') && bToken.length >= 4) {
+        return (
+          <strong
+            key={`b-${bIdx}`}
+            className={`font-bold ${isUserMsg ? 'text-white' : 'text-slate-900'}`}
+          >
+            {bToken.slice(2, -2)}
+          </strong>
+        );
+      }
+
+      // Split by `code` tokens
+      const codeParts = bToken.split(/(`.*?`)/g);
+      return codeParts.map((cToken, cIdx) => {
+        if (cToken.startsWith('`') && cToken.endsWith('`') && cToken.length >= 2) {
+          return (
+            <code
+              key={`c-${cIdx}`}
+              className={`px-1.5 py-0.5 rounded text-xs font-mono font-medium ${
+                isUserMsg
+                  ? 'bg-emerald-700/80 text-white'
+                  : 'bg-slate-100 text-emerald-800 border border-slate-200/60'
+              }`}
+            >
+              {cToken.slice(1, -1)}
+            </code>
+          );
+        }
+        return cToken;
+      });
+    });
+  };
+
+  // Helper to format text with links, bullets, and bold words
   const renderFormattedText = (text) => {
     if (!text) return null;
 
@@ -23,7 +63,8 @@ export function ChatMessage({ message, onQuickReply, onNavigate }) {
 
       while ((match = linkRegex.exec(line)) !== null) {
         if (match.index > lastIndex) {
-          parts.push(line.substring(lastIndex, match.index));
+          const rawSegment = line.substring(lastIndex, match.index);
+          parts.push(formatInlineStyles(rawSegment, isUser));
         }
         const label = match[1];
         const url = match[2];
@@ -32,29 +73,60 @@ export function ChatMessage({ message, onQuickReply, onNavigate }) {
             key={`link-${idx}-${match.index}`}
             to={url}
             onClick={onNavigate}
-            className="font-bold underline text-emerald-700 hover:text-emerald-800 inline-flex items-center gap-0.5"
+            className={`font-bold underline inline-flex items-center gap-0.5 ${
+              isUser
+                ? 'text-white hover:text-emerald-100'
+                : 'text-emerald-700 hover:text-emerald-800'
+            }`}
           >
             <span>{label}</span>
-            <ExternalLink className="w-3 h-3 inline" />
+            <ExternalLink className="w-3 h-3 inline ml-0.5" />
           </Link>
         );
         lastIndex = match.index + match[0].length;
       }
 
       if (lastIndex < line.length) {
-        parts.push(line.substring(lastIndex));
+        parts.push(formatInlineStyles(line.substring(lastIndex), isUser));
       }
 
       // Check if line is bullet
       const isBullet = line.trim().startsWith('- ') || line.trim().startsWith('* ');
-      const cleanContent = parts.length > 0 ? parts : line;
+      const cleanContent = parts.length > 0 ? parts : formatInlineStyles(line, isUser);
 
       if (isBullet) {
         return (
           <li key={idx} className="ml-4 list-disc text-xs sm:text-sm my-0.5">
-            {cleanContent}
+            {typeof cleanContent === 'string'
+              ? formatInlineStyles(cleanContent.replace(/^[-*]\s+/, ''), isUser)
+              : cleanContent}
           </li>
         );
+      }
+
+      // Check for numbered list item: "1. ", "2. ", etc.
+      const numberMatch = line.trim().match(/^(\d+)\.\s+(.*)/);
+      if (numberMatch) {
+        return (
+          <div key={idx} className="flex items-start gap-2 text-xs sm:text-sm my-1 pl-1">
+            <span
+              className={`font-bold text-[11px] px-1.5 py-0.5 rounded-full flex-shrink-0 mt-0.5 ${
+                isUser
+                  ? 'bg-emerald-700 text-white'
+                  : 'bg-emerald-100 text-emerald-800'
+              }`}
+            >
+              {numberMatch[1]}
+            </span>
+            <div className="flex-1 leading-relaxed">
+              {formatInlineStyles(numberMatch[2], isUser)}
+            </div>
+          </div>
+        );
+      }
+
+      if (!line.trim()) {
+        return <div key={idx} className="h-1.5" />;
       }
 
       return (

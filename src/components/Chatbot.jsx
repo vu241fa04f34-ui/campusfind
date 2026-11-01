@@ -240,11 +240,11 @@ export function Chatbot() {
 
                 {/* Loading indicator */}
                 {isLoading && (
-                  <div className="flex items-center gap-2 text-slate-400 text-xs py-2 px-1">
+                  <div className="flex items-center gap-2 text-slate-400 text-xs py-2 px-1 animate-pulse">
                     <div className="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center">
                       <Sparkles className="w-3.5 h-3.5 animate-spin" />
                     </div>
-                    <span className="italic text-slate-500">Searching campus listings...</span>
+                    <span className="italic text-slate-500 font-medium">AI Assistant is thinking...</span>
                   </div>
                 )}
 
@@ -266,7 +266,7 @@ export function Chatbot() {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder="Ask about a lost item, location, or guide..."
+                    placeholder="Ask anything about lost items, login, uploads, or campus..."
                     className="flex-1 px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500"
                     maxLength={300}
                     disabled={isLoading}

@@ -1,5 +1,5 @@
-import { itemService } from './itemService';
-import { CATEGORIES } from '../utils/validation';
+import { itemService } from './itemService.js';
+import { CATEGORIES } from '../utils/validation.js';
 
 /**
  * Common stop words to exclude from natural language search tokenization.
