@@ -547,7 +547,7 @@ export function ReportItemForm({ initialType = 'lost', onCancel }) {
           Upload Item Photo (Required) <span className="text-rose-500">*</span>
         </label>
         <p className="text-xs text-slate-500 mb-2">
-          Please upload a clear photo of the lost or found item. Supported formats: JPG, JPEG, PNG, WebP (up to 5 MB).
+          Uploading an item photo is compulsory to submit this report. Supported formats: JPG, JPEG, PNG, WebP (up to 5 MB).
         </p>
 
         {imagePreview ? (

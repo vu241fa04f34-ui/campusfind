@@ -57,3 +57,30 @@ export function timeAgo(dateInput) {
 
   return formatDate(date);
 }
+
+/**
+ * Returns a formatted date and time string (e.g., 'Nov 1, 2026, 8:30 PM').
+ */
+export function formatDateTime(dateInput) {
+  if (!dateInput) return 'N/A';
+
+  let date;
+  if (typeof dateInput === 'object' && dateInput.seconds) {
+    date = new Date(dateInput.seconds * 1000);
+  } else if (dateInput instanceof Date) {
+    date = dateInput;
+  } else {
+    date = new Date(dateInput);
+  }
+
+  if (isNaN(date.getTime())) return 'Invalid date';
+
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  }).format(date);
+}

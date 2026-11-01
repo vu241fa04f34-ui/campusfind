@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   ShieldCheck,
   Package,
   CheckCircle,
-  HelpCircle,
   Clock,
   Search,
   Trash2,
@@ -16,21 +15,25 @@ import {
   Users,
   Shield,
   KeyRound,
-  Check,
   X,
   Filter,
   UserCheck,
-  UserX,
   RefreshCw,
   SlidersHorizontal,
-  ChevronRight
+  ChevronRight,
+  ChevronLeft,
+  Copy,
+  CheckCircle2,
+  User,
+  Activity,
+  LogIn
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { itemService } from '../services/itemService';
 import { complaintService } from '../services/complaintService';
 import { auditService } from '../services/auditService';
 import { authService } from '../services/authService';
-import { formatDate } from '../utils/formatDate';
+import { formatDate, formatDateTime, timeAgo } from '../utils/formatDate';
 import { formatItemLocation } from '../utils/formatLocation';
 import { getItemImageUrl } from '../utils/itemImageHelper';
 
@@ -51,6 +54,12 @@ export function AdminDashboard() {
   // Search & Filter states
   const [userSearch, setUserSearch] = useState('');
   const [userRoleFilter, setUserRoleFilter] = useState('all');
+  const [userDateFilter, setUserDateFilter] = useState('all'); // 'all' | 'today' | '7days' | '30days'
+  const [userProviderFilter, setUserProviderFilter] = useState('all'); // 'all' | 'google' | 'phone' | 'password'
+  const [userPage, setUserPage] = useState(1);
+  const [userPageSize, setUserPageSize] = useState(10);
+  const [selectedUserForDetails, setSelectedUserForDetails] = useState(null);
+  const [copiedUid, setCopiedUid] = useState(null);
 
   const [itemSearch, setItemSearch] = useState('');
   const [itemTypeFilter, setItemTypeFilter] = useState('all');
@@ -266,6 +275,18 @@ export function AdminDashboard() {
     }
   };
 
+  const handleCopyUid = (uid, e) => {
+    e?.stopPropagation?.();
+    if (!uid) return;
+    try {
+      navigator.clipboard?.writeText(uid);
+      setCopiedUid(uid);
+      setTimeout(() => setCopiedUid(null), 2000);
+    } catch (err) {
+      console.warn('Copy failed:', err);
+    }
+  };
+
   const handleLogout = async () => {
     try {
       await logout();
@@ -276,7 +297,26 @@ export function AdminDashboard() {
   };
 
   // Calculations / Real Metrics
+  const nowMs = Date.now();
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const startOfTodayMs = startOfToday.getTime();
+
   const totalUsersCount = users.length;
+  const totalRegisteredUsers = users.length;
+  const recentlyActiveUsers = users.filter((u) => {
+    const t = new Date(u.lastLoginAt || u.lastSignInTime || 0).getTime();
+    return nowMs - t <= 7 * 24 * 60 * 60 * 1000;
+  }).length;
+  const usersLoggedInToday = users.filter((u) => {
+    const t = new Date(u.lastLoginAt || u.lastSignInTime || 0).getTime();
+    return t >= startOfTodayMs;
+  }).length;
+  const newRegistrations = users.filter((u) => {
+    const t = new Date(u.createdAt || 0).getTime();
+    return nowMs - t <= 7 * 24 * 60 * 60 * 1000;
+  }).length;
+
   const totalItemsCount = items.length;
   const lostItemsCount = items.filter((i) => i.type === 'lost').length;
   const foundItemsCount = items.filter((i) => i.type === 'found').length;
@@ -286,17 +326,43 @@ export function AdminDashboard() {
   const resolvedComplaintsCount = complaints.filter((c) => c.status === 'resolved').length;
   const staffAuthoritiesCount = users.filter((u) => u.role === 'authority').length;
 
-  // Filtered Users
+  // Filtered Users (Search by Name, Email, Phone, UID + Role + Provider + Date)
   const filteredUsers = users.filter((u) => {
     const q = userSearch.toLowerCase().trim();
     const matchesSearch =
       !q ||
       u.displayName?.toLowerCase().includes(q) ||
       u.email?.toLowerCase().includes(q) ||
+      u.phoneNumber?.toLowerCase().includes(q) ||
       u.uid?.toLowerCase().includes(q);
+
     const matchesRole = userRoleFilter === 'all' || u.role === userRoleFilter;
-    return matchesSearch && matchesRole;
+
+    const provider = (u.authProvider || '').toLowerCase();
+    const matchesProvider =
+      userProviderFilter === 'all' ||
+      (userProviderFilter === 'google' && provider.includes('google')) ||
+      (userProviderFilter === 'phone' && provider.includes('phone')) ||
+      (userProviderFilter === 'password' && (provider.includes('password') || provider.includes('email')));
+
+    let matchesDate = true;
+    const loginTime = new Date(u.lastLoginAt || u.lastSignInTime || 0).getTime();
+    if (userDateFilter === 'today') {
+      matchesDate = loginTime >= startOfTodayMs;
+    } else if (userDateFilter === '7days') {
+      matchesDate = nowMs - loginTime <= 7 * 24 * 60 * 60 * 1000;
+    } else if (userDateFilter === '30days') {
+      matchesDate = nowMs - loginTime <= 30 * 24 * 60 * 60 * 1000;
+    }
+
+    return matchesSearch && matchesRole && matchesProvider && matchesDate;
   });
+
+  const totalUserPages = Math.ceil(filteredUsers.length / userPageSize) || 1;
+  const paginatedUsers = filteredUsers.slice(
+    (userPage - 1) * userPageSize,
+    userPage * userPageSize
+  );
 
   // Filtered Items
   const filteredItems = items.filter((i) => {
@@ -365,7 +431,10 @@ export function AdminDashboard() {
           </button>
 
           <button
-            onClick={() => setActiveTab('users')}
+            onClick={() => {
+              setActiveTab('users');
+              setUserPage(1);
+            }}
             className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition ${
               activeTab === 'users'
                 ? 'bg-emerald-600 text-white shadow-sm'
@@ -374,7 +443,7 @@ export function AdminDashboard() {
           >
             <div className="flex items-center gap-2.5">
               <Users className="w-4 h-4" />
-              <span>Manage Users</span>
+              <span>User Management</span>
             </div>
             <span className="text-[10px] bg-slate-800 px-2 py-0.5 rounded-full text-slate-400">
               {totalUsersCount}
@@ -620,45 +689,189 @@ export function AdminDashboard() {
           </div>
         )}
 
-        {/* -------------------- TAB 2: MANAGE USERS -------------------- */}
+        {/* -------------------- TAB 2: USER MANAGEMENT -------------------- */}
         {activeTab === 'users' && (
-          <div className="space-y-5">
+          <div className="space-y-6">
+            {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-                  User Accounts Administration
+                  User Management
                 </h1>
                 <p className="text-xs text-slate-500">
-                  Inspect registered students, security staff, and administrators. Grant or revoke Staff Authority clearance.
+                  Live authenticated accounts, activity timestamps, and authorization status across Vignan University.
                 </p>
               </div>
 
-              {/* Role filter */}
-              <div className="flex items-center gap-1.5">
-                <Filter className="w-4 h-4 text-slate-400" />
-                <select
-                  value={userRoleFilter}
-                  onChange={(e) => setUserRoleFilter(e.target.value)}
-                  className="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                >
-                  <option value="all">All Roles</option>
-                  <option value="student">Students</option>
-                  <option value="authority">Staff Authorities</option>
-                  <option value="admin">Administrators</option>
-                </select>
+              <button
+                onClick={loadAllData}
+                className="self-start sm:self-auto inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 transition cursor-pointer"
+              >
+                <RefreshCw className="w-3.5 h-3.5 text-slate-500" />
+                <span>Sync Realtime Data</span>
+              </button>
+            </div>
+
+            {/* 4 Summary Statistics Cards */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+              <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    Total Registered Users
+                  </span>
+                  <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                    <Users className="w-4 h-4" />
+                  </div>
+                </div>
+                <p className="text-2xl font-black text-slate-900">{totalRegisteredUsers}</p>
+                <p className="text-[10px] text-slate-400">Total accounts in Firebase</p>
+              </div>
+
+              <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    Recently Active Users
+                  </span>
+                  <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                    <Activity className="w-4 h-4" />
+                  </div>
+                </div>
+                <p className="text-2xl font-black text-indigo-600">{recentlyActiveUsers}</p>
+                <p className="text-[10px] text-slate-400">Active in last 7 days</p>
+              </div>
+
+              <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    Users Logged In Today
+                  </span>
+                  <div className="w-7 h-7 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center">
+                    <LogIn className="w-4 h-4" />
+                  </div>
+                </div>
+                <p className="text-2xl font-black text-teal-600">{usersLoggedInToday}</p>
+                <p className="text-[10px] text-slate-400">Authenticated today</p>
+              </div>
+
+              <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    New Registrations
+                  </span>
+                  <div className="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+                    <UserCheck className="w-4 h-4" />
+                  </div>
+                </div>
+                <p className="text-2xl font-black text-purple-600">{newRegistrations}</p>
+                <p className="text-[10px] text-slate-400">Joined in last 7 days</p>
               </div>
             </div>
 
-            {/* Search */}
-            <div className="relative">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Search users by name, email, or UID..."
-                value={userSearch}
-                onChange={(e) => setUserSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              />
+            {/* Search & Filter Bar */}
+            <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
+              <div className="flex flex-col lg:flex-row gap-3">
+                {/* Search Input */}
+                <div className="relative flex-1">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    placeholder="Search by student name, email, phone number, or UID..."
+                    value={userSearch}
+                    onChange={(e) => {
+                      setUserSearch(e.target.value);
+                      setUserPage(1);
+                    }}
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                  {userSearch && (
+                    <button
+                      onClick={() => {
+                        setUserSearch('');
+                        setUserPage(1);
+                      }}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Filters */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {/* Activity Filter */}
+                  <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5">
+                    <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <select
+                      value={userDateFilter}
+                      onChange={(e) => {
+                        setUserDateFilter(e.target.value);
+                        setUserPage(1);
+                      }}
+                      className="w-full bg-transparent text-xs font-semibold text-slate-700 focus:outline-none"
+                    >
+                      <option value="all">Activity: All Time</option>
+                      <option value="today">Activity: Today</option>
+                      <option value="7days">Activity: Last 7 Days</option>
+                      <option value="30days">Activity: Last 30 Days</option>
+                    </select>
+                  </div>
+
+                  {/* Provider Filter */}
+                  <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5">
+                    <KeyRound className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <select
+                      value={userProviderFilter}
+                      onChange={(e) => {
+                        setUserProviderFilter(e.target.value);
+                        setUserPage(1);
+                      }}
+                      className="w-full bg-transparent text-xs font-semibold text-slate-700 focus:outline-none"
+                    >
+                      <option value="all">Provider: All</option>
+                      <option value="google">Google Login</option>
+                      <option value="phone">Phone OTP</option>
+                      <option value="password">Email &amp; Password</option>
+                    </select>
+                  </div>
+
+                  {/* Role Filter */}
+                  <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5">
+                    <Filter className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <select
+                      value={userRoleFilter}
+                      onChange={(e) => {
+                        setUserRoleFilter(e.target.value);
+                        setUserPage(1);
+                      }}
+                      className="w-full bg-transparent text-xs font-semibold text-slate-700 focus:outline-none"
+                    >
+                      <option value="all">Role: All</option>
+                      <option value="student">Students</option>
+                      <option value="authority">Staff Authorities</option>
+                      <option value="admin">Administrators</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Active Filter Chips */}
+              {(userSearch || userRoleFilter !== 'all' || userDateFilter !== 'all' || userProviderFilter !== 'all') && (
+                <div className="flex items-center gap-2 pt-1 border-t border-slate-100 text-[11px] text-slate-500">
+                  <span className="font-semibold">Filtered results ({filteredUsers.length} users):</span>
+                  <button
+                    onClick={() => {
+                      setUserSearch('');
+                      setUserRoleFilter('all');
+                      setUserDateFilter('all');
+                      setUserProviderFilter('all');
+                      setUserPage(1);
+                    }}
+                    className="text-emerald-700 hover:text-emerald-800 font-semibold underline cursor-pointer"
+                  >
+                    Reset all filters
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Users Table */}
@@ -667,71 +880,248 @@ export function AdminDashboard() {
                 <table className="w-full text-left text-xs">
                   <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
                     <tr>
-                      <th className="p-3.5">User</th>
-                      <th className="p-3.5">Contact / Email</th>
-                      <th className="p-3.5">UID</th>
-                      <th className="p-3.5">Role</th>
-                      <th className="p-3.5">Registered</th>
-                      <th className="p-3.5 text-right">Authority Clearance</th>
+                      <th className="p-3.5">Student / User</th>
+                      <th className="p-3.5">Email Address</th>
+                      <th className="p-3.5">Mobile Number</th>
+                      <th className="p-3.5">Firebase UID</th>
+                      <th className="p-3.5">Login Provider</th>
+                      <th className="p-3.5">Registration Date</th>
+                      <th className="p-3.5">Last Successful Login</th>
+                      <th className="p-3.5">Status</th>
+                      <th className="p-3.5 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 text-slate-700">
-                    {filteredUsers.map((u) => (
-                      <tr key={u.uid} className="hover:bg-slate-50/70 transition">
-                        <td className="p-3.5">
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-xs uppercase">
-                              {u.displayName ? u.displayName[0] : 'U'}
-                            </div>
-                            <div>
-                              <p className="font-bold text-slate-900">{u.displayName}</p>
-                              <p className="text-[10px] text-slate-400 capitalize">{u.authProvider || 'Email'}</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="p-3.5">
-                          <p className="font-medium text-slate-800">{u.email || u.phoneNumber || 'N/A'}</p>
-                        </td>
-                        <td className="p-3.5 font-mono text-[10px] text-slate-400">
-                          {u.uid.slice(0, 14)}...
-                        </td>
-                        <td className="p-3.5">
-                          <span
-                            className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                              u.role === 'admin'
-                                ? 'bg-purple-100 text-purple-800 border border-purple-200'
-                                : u.role === 'authority'
-                                ? 'bg-indigo-100 text-indigo-800 border border-indigo-200'
-                                : 'bg-slate-100 text-slate-700'
-                            }`}
-                          >
-                            {u.role}
-                          </span>
-                        </td>
-                        <td className="p-3.5 text-slate-500">
-                          {formatDate(u.createdAt)}
-                        </td>
-                        <td className="p-3.5 text-right">
-                          {u.role === 'admin' ? (
-                            <span className="text-[11px] font-semibold text-slate-400 italic">Root Admin</span>
-                          ) : (
-                            <button
-                              onClick={() => handleToggleStaffRole(u)}
-                              className={`px-3 py-1.5 rounded-xl font-semibold text-xs transition cursor-pointer ${
-                                u.role === 'authority'
-                                  ? 'border border-rose-200 text-rose-700 hover:bg-rose-50'
-                                  : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs'
-                              }`}
-                            >
-                              {u.role === 'authority' ? 'Revoke Staff' : 'Grant Staff Role'}
-                            </button>
-                          )}
+                    {paginatedUsers.length === 0 ? (
+                      <tr>
+                        <td colSpan={9} className="p-8 text-center text-slate-400">
+                          <Users className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                          <p className="font-bold text-slate-700 text-sm">No registered users found</p>
+                          <p className="text-xs text-slate-400 mt-1">
+                            {users.length === 0
+                              ? 'No users have authenticated in Firebase yet.'
+                              : 'No users matched your current search and filter settings.'}
+                          </p>
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      paginatedUsers.map((u) => {
+                        const providerLower = (u.authProvider || '').toLowerCase();
+                        let providerBadge = {
+                          label: 'Email & Password',
+                          classes: 'bg-slate-100 text-slate-700 border-slate-200'
+                        };
+                        if (providerLower.includes('google')) {
+                          providerBadge = {
+                            label: 'Google',
+                            classes: 'bg-rose-50 text-rose-700 border-rose-200'
+                          };
+                        } else if (providerLower.includes('phone')) {
+                          providerBadge = {
+                            label: 'Phone OTP',
+                            classes: 'bg-blue-50 text-blue-700 border-blue-200'
+                          };
+                        }
+
+                        return (
+                          <tr key={u.uid} className="hover:bg-slate-50/70 transition">
+                            {/* 1. Student Name */}
+                            <td className="p-3.5">
+                              <div className="flex items-center gap-2.5">
+                                {u.photoURL ? (
+                                  <img
+                                    src={u.photoURL}
+                                    alt={u.displayName || 'User'}
+                                    className="w-8 h-8 rounded-full object-cover border border-slate-200"
+                                  />
+                                ) : (
+                                  <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xs uppercase shrink-0">
+                                    {u.displayName ? u.displayName[0] : (u.email ? u.email[0].toUpperCase() : 'U')}
+                                  </div>
+                                )}
+                                <div className="min-w-0">
+                                  <p className="font-bold text-slate-900 truncate">
+                                    {u.displayName || 'Vignan Student'}
+                                  </p>
+                                  <div className="flex items-center gap-1.5 mt-0.5">
+                                    <span
+                                      className={`inline-block px-1.5 py-0.2 rounded text-[9px] font-bold uppercase tracking-wider ${
+                                        u.role === 'admin'
+                                          ? 'bg-purple-100 text-purple-800 border border-purple-200'
+                                          : u.role === 'authority'
+                                          ? 'bg-indigo-100 text-indigo-800 border border-indigo-200'
+                                          : 'bg-slate-100 text-slate-600'
+                                      }`}
+                                    >
+                                      {u.role || 'student'}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+
+                            {/* 2. Email Address */}
+                            <td className="p-3.5">
+                              {u.email ? (
+                                <span className="font-medium text-slate-800">{u.email}</span>
+                              ) : (
+                                <span className="text-slate-400 italic">Not Provided</span>
+                              )}
+                            </td>
+
+                            {/* 3. Mobile Number */}
+                            <td className="p-3.5">
+                              {u.phoneNumber ? (
+                                <span className="font-medium text-slate-800">{u.phoneNumber}</span>
+                              ) : (
+                                <span className="text-slate-400 italic">Not Provided</span>
+                              )}
+                            </td>
+
+                            {/* 4. Firebase UID */}
+                            <td className="p-3.5">
+                              <div className="flex items-center gap-1.5">
+                                <span className="font-mono text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                                  {u.uid.slice(0, 10)}...
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={(e) => handleCopyUid(u.uid, e)}
+                                  title="Copy full UID"
+                                  className="p-1 text-slate-400 hover:text-slate-700 rounded transition cursor-pointer"
+                                >
+                                  {copiedUid === u.uid ? (
+                                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                                  ) : (
+                                    <Copy className="w-3.5 h-3.5" />
+                                  )}
+                                </button>
+                              </div>
+                            </td>
+
+                            {/* 5. Login Provider */}
+                            <td className="p-3.5">
+                              <span
+                                className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold border ${providerBadge.classes}`}
+                              >
+                                {providerBadge.label}
+                              </span>
+                            </td>
+
+                            {/* 6. Account Registration Date */}
+                            <td className="p-3.5 text-slate-600 whitespace-nowrap">
+                              {formatDate(u.createdAt)}
+                            </td>
+
+                            {/* 7. Last Successful Login Date & Time */}
+                            <td className="p-3.5 text-slate-800 whitespace-nowrap">
+                              <div className="space-y-0.5">
+                                <p className="font-semibold text-slate-900">{formatDateTime(u.lastLoginAt)}</p>
+                                <p className="text-[10px] text-slate-400">{timeAgo(u.lastLoginAt)}</p>
+                              </div>
+                            </td>
+
+                            {/* 8. Account Status */}
+                            <td className="p-3.5">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                Active
+                              </span>
+                            </td>
+
+                            {/* 9. Actions */}
+                            <td className="p-3.5 text-right whitespace-nowrap">
+                              <div className="inline-flex items-center gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedUserForDetails(u)}
+                                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-slate-200 text-[11px] font-semibold text-slate-700 bg-white hover:bg-slate-50 transition cursor-pointer"
+                                  title="View full user details and activity"
+                                >
+                                  <Eye className="w-3.5 h-3.5 text-slate-500" />
+                                  <span>Details</span>
+                                </button>
+
+                                {u.role === 'admin' ? (
+                                  <span className="text-[11px] font-semibold text-slate-400 italic px-2">
+                                    Root Admin
+                                  </span>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleToggleStaffRole(u)}
+                                    className={`px-2.5 py-1.5 rounded-xl font-semibold text-[11px] transition cursor-pointer ${
+                                      u.role === 'authority'
+                                        ? 'border border-rose-200 text-rose-700 hover:bg-rose-50'
+                                        : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs'
+                                    }`}
+                                  >
+                                    {u.role === 'authority' ? 'Revoke Staff' : 'Grant Staff'}
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                 </table>
               </div>
+
+              {/* Pagination Controls */}
+              {filteredUsers.length > 0 && (
+                <div className="p-3.5 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600">
+                  <div className="flex items-center gap-2">
+                    <span>
+                      Showing{' '}
+                      <strong>{(userPage - 1) * userPageSize + 1}</strong> to{' '}
+                      <strong>{Math.min(userPage * userPageSize, filteredUsers.length)}</strong> of{' '}
+                      <strong>{filteredUsers.length}</strong> users
+                    </span>
+                    <span className="text-slate-300">|</span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-[11px] text-slate-500">Rows:</span>
+                      <select
+                        value={userPageSize}
+                        onChange={(e) => {
+                          setUserPageSize(Number(e.target.value));
+                          setUserPage(1);
+                        }}
+                        className="bg-white border border-slate-200 rounded-lg px-2 py-0.5 text-xs font-semibold text-slate-700 focus:outline-none"
+                      >
+                        <option value={10}>10</option>
+                        <option value={25}>25</option>
+                        <option value={50}>50</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      disabled={userPage <= 1}
+                      onClick={() => setUserPage((p) => Math.max(1, p - 1))}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed font-semibold text-xs text-slate-700"
+                    >
+                      <ChevronLeft className="w-3.5 h-3.5" />
+                      <span>Prev</span>
+                    </button>
+                    <span className="px-2 text-xs font-bold text-slate-700">
+                      Page {userPage} of {totalUserPages}
+                    </span>
+                    <button
+                      type="button"
+                      disabled={userPage >= totalUserPages}
+                      onClick={() => setUserPage((p) => Math.min(totalUserPages, p + 1))}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed font-semibold text-xs text-slate-700"
+                    >
+                      <span>Next</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -1379,6 +1769,150 @@ export function AdminDashboard() {
                 className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200"
               >
                 Close Preview
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* -------------------- MODAL: USER DETAILS VIEW -------------------- */}
+      {selectedUserForDetails && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 space-y-5 shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 duration-150">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                  <User className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900">Student Profile &amp; Login Activity</h3>
+                  <p className="text-[11px] text-slate-500">Live Firebase Authentication Record</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedUserForDetails(null)}
+                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* User Overview */}
+            <div className="flex items-center gap-3.5 p-3.5 bg-slate-50 rounded-2xl border border-slate-100">
+              {selectedUserForDetails.photoURL ? (
+                <img
+                  src={selectedUserForDetails.photoURL}
+                  alt={selectedUserForDetails.displayName || 'User'}
+                  className="w-12 h-12 rounded-2xl object-cover border border-slate-200"
+                />
+              ) : (
+                <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold text-base uppercase shrink-0">
+                  {selectedUserForDetails.displayName
+                    ? selectedUserForDetails.displayName[0]
+                    : selectedUserForDetails.email ? selectedUserForDetails.email[0].toUpperCase() : 'U'}
+                </div>
+              )}
+              <div className="min-w-0 flex-1">
+                <h4 className="font-extrabold text-slate-900 text-sm truncate">
+                  {selectedUserForDetails.displayName || 'Vignan Student'}
+                </h4>
+                <p className="text-xs text-slate-500 truncate">{selectedUserForDetails.email || 'No email registered'}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800">
+                    Status: {selectedUserForDetails.status || 'Active'}
+                  </span>
+                  <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-indigo-100 text-indigo-800">
+                    Role: {selectedUserForDetails.role || 'student'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Profile Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Email Address</span>
+                <p className="font-semibold text-slate-800">{selectedUserForDetails.email || 'Not Provided'}</p>
+              </div>
+
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Mobile Number</span>
+                <p className="font-semibold text-slate-800">{selectedUserForDetails.phoneNumber || 'Not Provided'}</p>
+              </div>
+
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1 sm:col-span-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Firebase User UID</span>
+                  <button
+                    type="button"
+                    onClick={(e) => handleCopyUid(selectedUserForDetails.uid, e)}
+                    className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 hover:text-emerald-800 cursor-pointer"
+                  >
+                    {copiedUid === selectedUserForDetails.uid ? (
+                      <>
+                        <CheckCircle2 className="w-3 h-3" />
+                        <span>Copied</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3" />
+                        <span>Copy UID</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+                <p className="font-mono text-[11px] text-slate-700 break-all select-all">
+                  {selectedUserForDetails.uid}
+                </p>
+              </div>
+
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Login Method / Provider</span>
+                <p className="font-semibold text-slate-800 capitalize">
+                  {selectedUserForDetails.authProvider === 'google'
+                    ? 'Google Account SSO'
+                    : selectedUserForDetails.authProvider === 'phone'
+                    ? 'Mobile Phone OTP'
+                    : 'Email & Password'}
+                </p>
+              </div>
+
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Registration Date</span>
+                <p className="font-semibold text-slate-800">{formatDateTime(selectedUserForDetails.createdAt)}</p>
+              </div>
+
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1 sm:col-span-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Last Successful Authentication</span>
+                <p className="font-semibold text-slate-900">{formatDateTime(selectedUserForDetails.lastLoginAt)}</p>
+                <p className="text-[11px] text-slate-400">{timeAgo(selectedUserForDetails.lastLoginAt)}</p>
+              </div>
+            </div>
+
+            {/* Footer Buttons */}
+            <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+              {selectedUserForDetails.role !== 'admin' && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleToggleStaffRole(selectedUserForDetails);
+                    setSelectedUserForDetails(null);
+                  }}
+                  className={`px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                    selectedUserForDetails.role === 'authority'
+                      ? 'border border-rose-200 text-rose-700 hover:bg-rose-50'
+                      : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                  }`}
+                >
+                  {selectedUserForDetails.role === 'authority' ? 'Revoke Staff Clearance' : 'Grant Staff Authority'}
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => setSelectedUserForDetails(null)}
+                className="ml-auto px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition cursor-pointer"
+              >
+                Close Details
               </button>
             </div>
           </div>

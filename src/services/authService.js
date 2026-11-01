@@ -37,6 +37,82 @@ export const authService = {
   },
 
   /**
+   * Securely records or updates user login activity in Firestore upon successful authentication.
+   * Only called after successful authentication - never on passive page loads.
+   */
+  async recordUserLogin(user, providerOverride = null) {
+    if (!user || !user.uid || !isFirebaseConfigured || !db) return;
+
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      const snap = await getDoc(userRef);
+
+      let detectedProvider = providerOverride;
+      if (!detectedProvider && user.providerData && user.providerData.length > 0) {
+        const pid = user.providerData[0].providerId;
+        if (pid === 'google.com') detectedProvider = 'google';
+        else if (pid === 'phone') detectedProvider = 'phone';
+        else if (pid === 'password') detectedProvider = 'password';
+        else detectedProvider = pid;
+      }
+      if (!detectedProvider) {
+        if (user.phoneNumber) detectedProvider = 'phone';
+        else detectedProvider = 'password';
+      }
+
+      const nowIso = new Date().toISOString();
+      const creationTime = user.metadata?.creationTime
+        ? new Date(user.metadata.creationTime).toISOString()
+        : nowIso;
+      const lastSignInTime = user.metadata?.lastSignInTime
+        ? new Date(user.metadata.lastSignInTime).toISOString()
+        : nowIso;
+
+      if (!snap.exists()) {
+        const emailLower = (user.email || '').toLowerCase().trim();
+        const isVignanAdmin = emailLower === 'admin@vignan.ac.in' || emailLower.endsWith('admin@vignan.ac.in');
+        const isVignanStaff = emailLower.endsWith('staff@vignan.ac.in') || emailLower.endsWith('authority@vignan.ac.in');
+        const initialRole = isVignanAdmin ? 'admin' : (isVignanStaff ? 'authority' : 'student');
+
+        await setDoc(userRef, {
+          uid: user.uid,
+          email: user.email || null,
+          displayName: user.displayName || (user.email ? user.email.split('@')[0] : (user.phoneNumber ? `Student ${user.phoneNumber.slice(-4)}` : 'Campus Student')),
+          phoneNumber: user.phoneNumber || null,
+          photoURL: user.photoURL || null,
+          role: initialRole,
+          authProvider: detectedProvider,
+          status: 'active',
+          createdAt: creationTime,
+          lastLoginAt: lastSignInTime,
+          lastSignInTime: lastSignInTime,
+          updatedAt: serverTimestamp()
+        });
+      } else {
+        const existingData = snap.data();
+        const updatePayload = {
+          lastLoginAt: lastSignInTime,
+          lastSignInTime: lastSignInTime,
+          status: 'active',
+          updatedAt: serverTimestamp()
+        };
+        if (user.email && !existingData.email) updatePayload.email = user.email;
+        if (user.phoneNumber && !existingData.phoneNumber) updatePayload.phoneNumber = user.phoneNumber;
+        if (user.displayName && (!existingData.displayName || existingData.displayName === 'Campus User')) {
+          updatePayload.displayName = user.displayName;
+        }
+        if (user.photoURL && !existingData.photoURL) updatePayload.photoURL = user.photoURL;
+        if (detectedProvider && !existingData.authProvider) updatePayload.authProvider = detectedProvider;
+        if (!existingData.createdAt) updatePayload.createdAt = creationTime;
+
+        await updateDoc(userRef, updatePayload);
+      }
+    } catch (err) {
+      console.warn('Could not record user login activity in Firestore:', err);
+    }
+  },
+
+  /**
    * Registers a new user with Email and Password using Firebase Auth.
    */
   async register(email, password, displayName) {
@@ -51,22 +127,8 @@ export const authService = {
       await updateProfile(user, { displayName });
     }
 
-    // Store private user profile document in Firestore
-    if (db) {
-      try {
-        await setDoc(doc(db, 'users', user.uid), {
-          uid: user.uid,
-          email: user.email,
-          displayName: displayName || user.email.split('@')[0],
-          photoURL: user.photoURL || null,
-          authProvider: 'password',
-          createdAt: serverTimestamp(),
-          lastLoginAt: serverTimestamp()
-        });
-      } catch (dbErr) {
-        console.warn('Could not initialize Firestore user document:', dbErr);
-      }
-    }
+    // Record user in Firestore
+    await this.recordUserLogin(user, 'password');
 
     return user;
   },
@@ -82,28 +144,8 @@ export const authService = {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Update last login timestamp without overwriting existing profile or roles
-    if (db) {
-      try {
-        const userRef = doc(db, 'users', user.uid);
-        const snap = await getDoc(userRef);
-        if (snap.exists()) {
-          await updateDoc(userRef, { lastLoginAt: serverTimestamp() });
-        } else {
-          await setDoc(userRef, {
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName || user.email.split('@')[0],
-            photoURL: user.photoURL || null,
-            authProvider: 'password',
-            createdAt: serverTimestamp(),
-            lastLoginAt: serverTimestamp()
-          });
-        }
-      } catch (e) {
-        console.warn('Could not update user login timestamp:', e);
-      }
-    }
+    // Record login timestamp and active status in Firestore
+    await this.recordUserLogin(user, 'password');
 
     return user;
   },
@@ -132,33 +174,8 @@ export const authService = {
 
     const user = userCredential.user;
 
-    // Safe Profile handling: create if first time, update lastLoginAt if returning
-    if (db) {
-      try {
-        const userRef = doc(db, 'users', user.uid);
-        const docSnap = await getDoc(userRef);
-
-        if (!docSnap.exists()) {
-          // New Google user: initialize profile safely
-          await setDoc(userRef, {
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName || user.email.split('@')[0],
-            photoURL: user.photoURL || null,
-            authProvider: 'google',
-            createdAt: serverTimestamp(),
-            lastLoginAt: serverTimestamp()
-          });
-        } else {
-          // Returning Google user: preserve existing profile & listings, update last login only
-          await updateDoc(userRef, {
-            lastLoginAt: serverTimestamp()
-          });
-        }
-      } catch (dbErr) {
-        console.warn('Firestore profile sync error on Google sign-in:', dbErr);
-      }
-    }
+    // Record Google user login activity safely in Firestore
+    await this.recordUserLogin(user, 'google');
 
     return user;
   },
@@ -172,23 +189,7 @@ export const authService = {
         const result = await getRedirectResult(auth);
         if (result && result.user) {
           const user = result.user;
-          if (db) {
-            const userRef = doc(db, 'users', user.uid);
-            const docSnap = await getDoc(userRef);
-            if (!docSnap.exists()) {
-              await setDoc(userRef, {
-                uid: user.uid,
-                email: user.email,
-                displayName: user.displayName || user.email.split('@')[0],
-                photoURL: user.photoURL || null,
-                authProvider: 'google',
-                createdAt: serverTimestamp(),
-                lastLoginAt: serverTimestamp()
-              });
-            } else {
-              await updateDoc(userRef, { lastLoginAt: serverTimestamp() });
-            }
-          }
+          await this.recordUserLogin(user, 'google');
           return user;
         }
       } catch (err) {
@@ -295,34 +296,8 @@ export const authService = {
     const user = userCredential.user;
 
     // Save/update user profile in Firestore
-    if (db && user) {
-      try {
-        const userRef = doc(db, 'users', user.uid);
-        const docSnap = await getDoc(userRef);
-
-        const phoneDisplay = user.phoneNumber 
-          ? `Student ${user.phoneNumber.slice(-4)}` 
-          : 'Campus Student';
-
-        if (!docSnap.exists()) {
-          await setDoc(userRef, {
-            uid: user.uid,
-            phoneNumber: user.phoneNumber,
-            displayName: phoneDisplay,
-            email: user.email || null,
-            photoURL: user.photoURL || null,
-            authProvider: 'phone',
-            createdAt: serverTimestamp(),
-            lastLoginAt: serverTimestamp()
-          });
-        } else {
-          await updateDoc(userRef, {
-            lastLoginAt: serverTimestamp()
-          });
-        }
-      } catch (dbErr) {
-        console.warn('Firestore profile sync error on phone verification:', dbErr);
-      }
+    if (user) {
+      await this.recordUserLogin(user, 'phone');
     }
 
     return user;
@@ -519,6 +494,7 @@ export const authService = {
       );
     }
 
+    await this.recordUserLogin(user, 'password');
     return user;
   },
 
@@ -564,91 +540,74 @@ export const authService = {
       );
     }
 
+    await this.recordUserLogin(user, 'password');
     return user;
   },
 
   /**
-   * Admin: Fetch all registered users
+   * Admin: Fetch all registered users from Cloud Firestore.
+   * Returns real users only, sorted by lastLoginAt descending.
    */
   async getAllUsers() {
-    const demoFallbackUsers = [
-      {
-        uid: 'admin-seed-uid',
-        displayName: 'Campus Administrator',
-        email: 'admin@vignan.ac.in',
-        role: 'admin',
-        authProvider: 'password',
-        createdAt: '2026-01-10T09:00:00.000Z',
-        lastLoginAt: new Date().toISOString()
-      },
-      {
-        uid: 'staff-seed-uid',
-        displayName: 'Campus Security Officer',
-        email: 'security.staff@vignan.ac.in',
-        role: 'authority',
-        authProvider: 'password',
-        createdAt: '2026-02-15T11:00:00.000Z',
-        lastLoginAt: new Date(Date.now() - 3600000).toISOString()
-      },
-      {
-        uid: 'student-demo-1',
-        displayName: 'Ravi Kumar',
-        email: 'student.cse@vignan.ac.in',
-        role: 'student',
-        authProvider: 'google',
-        createdAt: '2026-03-01T14:20:00.000Z',
-        lastLoginAt: new Date(Date.now() - 7200000).toISOString()
-      },
-      {
-        uid: 'student-demo-2',
-        displayName: 'Ananya Sharma',
-        email: 'ananya.s@vignan.ac.in',
-        role: 'student',
-        authProvider: 'google',
-        createdAt: '2026-03-05T12:00:00.000Z',
-        lastLoginAt: new Date(Date.now() - 14400000).toISOString()
-      },
-      {
-        uid: 'student-demo-3',
-        displayName: 'Pavan Kalyan',
-        email: 'pavan.k@vignan.ac.in',
-        role: 'student',
-        authProvider: 'phone',
-        phoneNumber: '+91 98765 43210',
-        createdAt: '2026-04-12T10:15:00.000Z',
-        lastLoginAt: new Date(Date.now() - 86400000).toISOString()
-      }
-    ];
-
-    if (isFirebaseConfigured && db) {
-      try {
-        const snap = await getDocs(collection(db, 'users'));
-        if (!snap.empty) {
-          const firestoreUsers = snap.docs.map((d) => {
-            const data = d.data();
-            return {
-              uid: d.id,
-              displayName: data.displayName || data.email?.split('@')[0] || 'Campus User',
-              email: data.email || null,
-              phoneNumber: data.phoneNumber || null,
-              role: data.role || (data.email?.endsWith('admin@vignan.ac.in') ? 'admin' : (data.email?.endsWith('staff@vignan.ac.in') ? 'authority' : 'student')),
-              authProvider: data.authProvider || 'password',
-              createdAt: data.createdAt?.toDate?.()?.toISOString() || data.createdAt || new Date().toISOString(),
-              lastLoginAt: data.lastLoginAt?.toDate?.()?.toISOString() || data.lastLoginAt || new Date().toISOString()
-            };
-          });
-
-          // Merge any seed demo accounts not present in Firestore
-          const existingEmails = new Set(firestoreUsers.map((u) => u.email?.toLowerCase()).filter(Boolean));
-          const missingDemos = demoFallbackUsers.filter((u) => !existingEmails.has(u.email?.toLowerCase()));
-          return [...firestoreUsers, ...missingDemos];
-        }
-      } catch (err) {
-        console.warn('Firestore getAllUsers failed, falling back to local dataset:', err);
-      }
+    if (!isFirebaseConfigured || !db) {
+      return [];
     }
 
-    return demoFallbackUsers;
+    try {
+      const snap = await getDocs(collection(db, 'users'));
+      if (snap.empty) {
+        return [];
+      }
+
+      const usersList = snap.docs.map((d) => {
+        const data = d.data();
+        let createdAtIso;
+        if (data.createdAt?.toDate) {
+          createdAtIso = data.createdAt.toDate().toISOString();
+        } else if (typeof data.createdAt === 'string') {
+          createdAtIso = data.createdAt;
+        } else {
+          createdAtIso = new Date().toISOString();
+        }
+
+        let lastLoginIso;
+        if (data.lastLoginAt?.toDate) {
+          lastLoginIso = data.lastLoginAt.toDate().toISOString();
+        } else if (typeof data.lastLoginAt === 'string') {
+          lastLoginIso = data.lastLoginAt;
+        } else if (data.lastSignInTime) {
+          lastLoginIso = data.lastSignInTime;
+        } else {
+          lastLoginIso = createdAtIso;
+        }
+
+        return {
+          uid: d.id,
+          displayName: data.displayName || data.name || (data.email ? data.email.split('@')[0] : 'Campus Student'),
+          email: data.email || null,
+          phoneNumber: data.phoneNumber || data.phone || null,
+          photoURL: data.photoURL || null,
+          role: data.role || (data.email?.endsWith('admin@vignan.ac.in') ? 'admin' : (data.email?.endsWith('staff@vignan.ac.in') ? 'authority' : 'student')),
+          authProvider: data.authProvider || (data.phoneNumber ? 'phone' : 'password'),
+          status: data.status || 'active',
+          createdAt: createdAtIso,
+          lastLoginAt: lastLoginIso,
+          lastSignInTime: data.lastSignInTime || lastLoginIso
+        };
+      });
+
+      // Sort by lastLoginAt descending (most recently logged in first)
+      usersList.sort((a, b) => {
+        const timeA = new Date(a.lastLoginAt || a.createdAt).getTime() || 0;
+        const timeB = new Date(b.lastLoginAt || b.createdAt).getTime() || 0;
+        return timeB - timeA;
+      });
+
+      return usersList;
+    } catch (err) {
+      console.error('Firestore getAllUsers failed:', err);
+      return [];
+    }
   },
 
   /**
