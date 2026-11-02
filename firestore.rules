@@ -14,7 +14,9 @@ service cloud.firestore {
     function isAdmin() {
       return isAuthenticated() && (
         request.auth.token.admin == true ||
-        request.auth.token.email.matches('.*admin@vignan\\.ac\\.in$')
+        (request.auth.token.email != null && request.auth.token.email.matches('.*admin@vignan\\.ac\\.in$')) ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin')
       );
     }
 
@@ -22,7 +24,9 @@ service cloud.firestore {
       return isAuthenticated() && (
         request.auth.token.authority == true ||
         request.auth.token.role == 'authority' ||
-        request.auth.token.email.matches('.*(staff|authority)@vignan\\.ac\\.in$')
+        (request.auth.token.email != null && request.auth.token.email.matches('.*(staff|authority)@vignan\\.ac\\.in$')) ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['authority', 'admin'])
       );
     }
 

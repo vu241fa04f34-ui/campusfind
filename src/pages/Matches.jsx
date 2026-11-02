@@ -36,6 +36,12 @@ export function Matches() {
 
   useEffect(() => {
     loadMatches();
+    const unsubscribe = itemService.subscribeToItems(() => {
+      loadMatches();
+    });
+    return () => {
+      if (typeof unsubscribe === 'function') unsubscribe();
+    };
   }, [currentUser]);
 
   const handleDismiss = (matchKey) => {

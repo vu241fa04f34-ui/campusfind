@@ -59,6 +59,17 @@ export function Chatbot() {
     }
   }, [isOpen, isMinimized]);
 
+  // Support global open trigger from landing page cards and navbar
+  useEffect(() => {
+    const handleTrigger = () => {
+      setIsOpen(true);
+      setIsMinimized(false);
+      setUnreadCount(0);
+    };
+    window.addEventListener('campusfind:open-chatbot', handleTrigger);
+    return () => window.removeEventListener('campusfind:open-chatbot', handleTrigger);
+  }, []);
+
   const handleOpen = () => {
     setIsOpen(true);
     setIsMinimized(false);

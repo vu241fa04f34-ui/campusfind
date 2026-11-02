@@ -65,14 +65,14 @@ function saveLocalItems(items) {
 // Safely parses timestamps whether from Firestore Timestamp, milliseconds, or ISO strings
 function getItemTimestamp(item) {
   if (!item) return 0;
-  const val = item.createdAt || item.eventDate;
-  if (!val) return 0;
+  const val = item.createdAt || item.updatedAt || item.eventDate;
+  if (!val) return Date.now();
   if (typeof val === 'object') {
     if (typeof val.toDate === 'function') return val.toDate().getTime();
     if (typeof val.seconds === 'number') return val.seconds * 1000;
   }
   const parsed = new Date(val).getTime();
-  return isNaN(parsed) ? 0 : parsed;
+  return isNaN(parsed) ? Date.now() : parsed;
 }
 
 export const itemService = {
@@ -215,14 +215,29 @@ export const itemService = {
             let allItems = [...pendingLocalReports, ...realDocs, ...INITIAL_DEMO_ITEMS];
             allItems = allItems.filter((i) => i.category !== 'Stationery');
 
+            // Save to local cache so page navigation is instantaneous
+            saveLocalItems(allItems);
+
+            // Apply filters if any
+            let filtered = allItems;
+            if (filters.type && filters.type !== 'all') {
+              filtered = filtered.filter((item) => item.type === filters.type);
+            }
+            if (filters.category && filters.category !== 'all') {
+              filtered = filtered.filter((item) => item.category === filters.category);
+            }
+            if (filters.status && filters.status !== 'all') {
+              filtered = filtered.filter((item) => item.status === filters.status);
+            }
+
             // Apply sorting
-            allItems.sort((a, b) => {
+            filtered.sort((a, b) => {
               const dateA = getItemTimestamp(a);
               const dateB = getItemTimestamp(b);
               return filters.sort === 'oldest' ? dateA - dateB : dateB - dateA;
             });
 
-            callback(allItems);
+            callback(filtered);
           } catch (snapshotErr) {
             console.error('[CampusFind] Error processing Firestore item snapshot:', snapshotErr);
           }
@@ -529,23 +544,31 @@ export const itemService = {
    * Updates an existing item
    */
   async updateItem(id, updates, _currentUser) {
-    if (isFirebaseConfigured && db) {
+    if (isFirebaseConfigured && db && !id.startsWith('local-') && !id.startsWith('demo-')) {
       try {
+        // Strip undefined fields to ensure clean Firestore update payload
+        const cleanUpdates = {};
+        for (const [k, v] of Object.entries(updates)) {
+          if (v !== undefined) {
+            cleanUpdates[k] = v;
+          }
+        }
+
         const updatePromise = (async () => {
           const docRef = doc(db, 'items', id);
           await updateDoc(docRef, {
-            ...updates,
+            ...cleanUpdates,
             updatedAt: serverTimestamp()
           });
         })();
 
         const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Firestore updateItem timeout')), 4000)
+          setTimeout(() => reject(new Error('Firestore updateItem timeout')), 5000)
         );
 
         await Promise.race([updatePromise, timeoutPromise]);
       } catch (err) {
-        console.warn('Firestore updateItem failed or timed out:', err);
+        console.warn('Firestore updateItem warning:', err);
       }
     }
 

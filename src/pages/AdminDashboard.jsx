@@ -18,6 +18,7 @@ import {
   X,
   Filter,
   UserCheck,
+  UserRound,
   RefreshCw,
   SlidersHorizontal,
   ChevronRight,
@@ -88,27 +89,36 @@ export function AdminDashboard() {
   const [notification, setNotification] = useState('');
 
   const loadAllData = async () => {
-    setLoading(true);
     try {
-      const [allItems, allUsers, allComplaints, allLogs] = await Promise.all([
-        itemService.getItems(),
+      const [allUsers, allComplaints, allLogs] = await Promise.all([
         authService.getAllUsers(),
         complaintService.getAllComplaints(),
         auditService.getAuditLogs(100)
       ]);
-      setItems(allItems);
       setUsers(allUsers);
       setComplaints(allComplaints);
       setAuditLogs(allLogs);
     } catch (err) {
       console.error('Failed to load admin data:', err);
-    } finally {
-      setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadAllData();
+    setLoading(true);
+
+    // Real-time synchronization of all items via Firestore onSnapshot
+    const unsubscribeItems = itemService.subscribeToItems((liveItems) => {
+      setItems(liveItems);
+      setLoading(false);
+    });
+
+    loadAllData().finally(() => setLoading(false));
+
+    return () => {
+      if (typeof unsubscribeItems === 'function') {
+        unsubscribeItems();
+      }
+    };
   }, []);
 
   const notify = (msg) => {
@@ -316,6 +326,9 @@ export function AdminDashboard() {
     const t = new Date(u.createdAt || 0).getTime();
     return nowMs - t <= 7 * 24 * 60 * 60 * 1000;
   }).length;
+  const latestLoginTimestamp = users.length > 0 && users[0].lastLoginAt
+    ? formatDateTime(users[0].lastLoginAt)
+    : 'No logins yet';
 
   const totalItemsCount = items.length;
   const lostItemsCount = items.filter((i) => i.type === 'lost').length;
@@ -442,8 +455,8 @@ export function AdminDashboard() {
             }`}
           >
             <div className="flex items-center gap-2.5">
-              <Users className="w-4 h-4" />
-              <span>User Management</span>
+              <UserRound className="w-4 h-4" />
+              <span>Students Logins</span>
             </div>
             <span className="text-[10px] bg-slate-800 px-2 py-0.5 rounded-full text-slate-400">
               {totalUsersCount}
@@ -689,17 +702,17 @@ export function AdminDashboard() {
           </div>
         )}
 
-        {/* -------------------- TAB 2: USER MANAGEMENT -------------------- */}
+        {/* -------------------- TAB 2: STUDENTS LOGINS -------------------- */}
         {activeTab === 'users' && (
           <div className="space-y-6">
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-                  User Management
+                  Students Logins
                 </h1>
                 <p className="text-xs text-slate-500">
-                  Live authenticated accounts, activity timestamps, and authorization status across Vignan University.
+                  Real-time registered student accounts, authentication providers, and verified login activity.
                 </p>
               </div>
 
@@ -712,15 +725,15 @@ export function AdminDashboard() {
               </button>
             </div>
 
-            {/* 4 Summary Statistics Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+            {/* 5 Summary Statistics Cards */}
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3.5">
               <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-1">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                    Total Registered Users
+                    Total Registered Students
                   </span>
                   <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                    <Users className="w-4 h-4" />
+                    <UserRound className="w-4 h-4" />
                   </div>
                 </div>
                 <p className="text-2xl font-black text-slate-900">{totalRegisteredUsers}</p>
@@ -730,20 +743,7 @@ export function AdminDashboard() {
               <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-1">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                    Recently Active Users
-                  </span>
-                  <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                    <Activity className="w-4 h-4" />
-                  </div>
-                </div>
-                <p className="text-2xl font-black text-indigo-600">{recentlyActiveUsers}</p>
-                <p className="text-[10px] text-slate-400">Active in last 7 days</p>
-              </div>
-
-              <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-1">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                    Users Logged In Today
+                    Students Logged In Today
                   </span>
                   <div className="w-7 h-7 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center">
                     <LogIn className="w-4 h-4" />
@@ -751,6 +751,19 @@ export function AdminDashboard() {
                 </div>
                 <p className="text-2xl font-black text-teal-600">{usersLoggedInToday}</p>
                 <p className="text-[10px] text-slate-400">Authenticated today</p>
+              </div>
+
+              <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    Recently Active Students
+                  </span>
+                  <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                    <Activity className="w-4 h-4" />
+                  </div>
+                </div>
+                <p className="text-2xl font-black text-indigo-600">{recentlyActiveUsers}</p>
+                <p className="text-[10px] text-slate-400">Active in last 7 days</p>
               </div>
 
               <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-1">
@@ -764,6 +777,21 @@ export function AdminDashboard() {
                 </div>
                 <p className="text-2xl font-black text-purple-600">{newRegistrations}</p>
                 <p className="text-[10px] text-slate-400">Joined in last 7 days</p>
+              </div>
+
+              <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-1 col-span-2 lg:col-span-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    Latest Login Activity
+                  </span>
+                  <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                    <Clock className="w-4 h-4" />
+                  </div>
+                </div>
+                <p className="text-xs font-black text-slate-900 truncate" title={latestLoginTimestamp}>
+                  {latestLoginTimestamp}
+                </p>
+                <p className="text-[10px] text-slate-400">Most recent session</p>
               </div>
             </div>
 
@@ -809,7 +837,7 @@ export function AdminDashboard() {
                       }}
                       className="w-full bg-transparent text-xs font-semibold text-slate-700 focus:outline-none"
                     >
-                      <option value="all">Activity: All Time</option>
+                      <option value="all">Activity: All Students</option>
                       <option value="today">Activity: Today</option>
                       <option value="7days">Activity: Last 7 Days</option>
                       <option value="30days">Activity: Last 30 Days</option>
@@ -827,7 +855,7 @@ export function AdminDashboard() {
                       }}
                       className="w-full bg-transparent text-xs font-semibold text-slate-700 focus:outline-none"
                     >
-                      <option value="all">Provider: All</option>
+                      <option value="all">Provider: All Providers</option>
                       <option value="google">Google Login</option>
                       <option value="phone">Phone OTP</option>
                       <option value="password">Email &amp; Password</option>

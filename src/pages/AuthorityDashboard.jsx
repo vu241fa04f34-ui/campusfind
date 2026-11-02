@@ -66,25 +66,34 @@ export function AuthorityDashboard() {
   const [actionSuccessMsg, setActionSuccessMsg] = useState('');
 
   const loadData = async () => {
-    setLoading(true);
     try {
-      const [allItems, allComplaints, userActivity] = await Promise.all([
-        itemService.getItems(),
+      const [allComplaints, userActivity] = await Promise.all([
         complaintService.getAllComplaints(),
         auditService.getAuditLogsForActor(currentUser?.uid || currentUser?.email)
       ]);
-      setItems(allItems);
       setComplaints(allComplaints);
       setMyActivity(userActivity);
     } catch (err) {
-      console.error('Failed to load authority dashboard data:', err);
-    } finally {
-      setLoading(false);
+      console.error('Failed to load authority dashboard complaints/activity:', err);
     }
   };
 
   useEffect(() => {
-    loadData();
+    setLoading(true);
+
+    // Real-time synchronization of all campus items via Firestore onSnapshot
+    const unsubscribeItems = itemService.subscribeToItems((liveItems) => {
+      setItems(liveItems);
+      setLoading(false);
+    });
+
+    loadData().finally(() => setLoading(false));
+
+    return () => {
+      if (typeof unsubscribeItems === 'function') {
+        unsubscribeItems();
+      }
+    };
   }, [currentUser]);
 
   const showNotification = (msg) => {

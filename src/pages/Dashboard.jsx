@@ -53,38 +53,39 @@ export function Dashboard() {
 
   useEffect(() => {
     let isMounted = true;
-    async function loadDashboardData() {
-      if (!currentUser) {
-        if (isMounted) setLoading(false);
-        return;
-      }
-      if (isMounted) setLoading(true);
-      try {
-        await itemService.syncLocalItemsToFirestore(currentUser);
-        const allItems = await itemService.getItems();
-        if (!isMounted) return;
-        // Filter items where owner matches current user
-        const userItems = allItems.filter(
-          (i) => i.ownerUid === currentUser.uid
-        );
-        setItems(userItems);
+    let unsubscribeItems = () => {};
 
-        const userRequests = await recoveryService.getUserRequests(currentUser.uid);
-        if (isMounted) {
-          setRequests(userRequests);
-        }
-      } catch (err) {
-        console.error('Error loading dashboard data:', err);
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
+    if (!currentUser) {
+      setLoading(false);
+      return;
     }
 
-    loadDashboardData();
+    setLoading(true);
+
+    itemService.syncLocalItemsToFirestore(currentUser).catch(() => {});
+
+    // Real-time synchronization for student's reported items
+    unsubscribeItems = itemService.subscribeToItems((allItems) => {
+      if (!isMounted) return;
+      const userItems = allItems.filter((i) => i.ownerUid === currentUser.uid);
+      setItems(userItems);
+      setLoading(false);
+    });
+
+    recoveryService
+      .getUserRequests(currentUser.uid)
+      .then((userRequests) => {
+        if (isMounted) setRequests(userRequests);
+      })
+      .catch((err) => {
+        console.warn('Could not load recovery requests:', err);
+      });
+
     return () => {
       isMounted = false;
+      if (typeof unsubscribeItems === 'function') {
+        unsubscribeItems();
+      }
     };
   }, [currentUser]);
 
