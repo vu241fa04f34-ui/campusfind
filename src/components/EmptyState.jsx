@@ -9,15 +9,15 @@ export function EmptyState({
   showReportAction = true
 }) {
   return (
-    <div className="bg-white rounded-3xl border border-slate-200/80 p-8 sm:p-12 text-center max-w-lg mx-auto shadow-sm my-8">
-      <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-4 border border-emerald-100">
+    <div className="clay-card bg-white rounded-3xl border border-[#E8EAF0] p-8 sm:p-12 text-center max-w-lg mx-auto shadow-sm my-8">
+      <div className="w-16 h-16 rounded-2xl bg-[#DDF4EE] text-[#4776E6] flex items-center justify-center mx-auto mb-4 border border-[#bfebe0]">
         <SearchX className="w-8 h-8" />
       </div>
 
-      <h3 className="text-lg font-bold text-slate-800 mb-2">
+      <h3 className="text-lg font-bold text-[#202B3C] mb-2">
         {title}
       </h3>
-      <p className="text-sm text-slate-500 mb-6 leading-relaxed">
+      <p className="text-sm text-[#737B89] mb-6 leading-relaxed">
         {description}
       </p>
 
@@ -25,7 +25,7 @@ export function EmptyState({
         {onReset && (
           <button
             onClick={onReset}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 transition"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-[#202B3C] bg-[#F8F7F4] hover:bg-[#E8EAF0] border border-[#E8EAF0] transition cursor-pointer"
           >
             <RotateCcw className="w-4 h-4" />
             <span>Clear Filters</span>
@@ -35,7 +35,7 @@ export function EmptyState({
         {showReportAction && (
           <Link
             to="/report"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm transition"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-[#4776E6] hover:bg-[#385ec7] shadow-sm transition"
           >
             <PlusCircle className="w-4 h-4" />
             <span>Report Item</span>

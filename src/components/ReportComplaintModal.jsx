@@ -52,30 +52,30 @@ export function ReportComplaintModal({ item, onClose, onSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-100 relative animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+      <div className="clay-card bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-[#E8EAF0] relative animate-in fade-in zoom-in-95 duration-150">
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition"
+          className="absolute top-5 right-5 p-2 text-[#737B89] hover:text-[#202B3C] rounded-xl hover:bg-[#F8F7F4] transition cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
 
         {submitted ? (
           <div className="text-center py-6 space-y-4">
-            <div className="w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center mx-auto">
+            <div className="w-16 h-16 rounded-2xl bg-[#DDF4EE] border border-[#bfebe0] text-[#4776E6] flex items-center justify-center mx-auto">
               <CheckCircle2 className="w-8 h-8" />
             </div>
             <div className="space-y-1">
-              <h3 className="text-xl font-bold text-slate-900">Issue Report Submitted</h3>
-              <p className="text-xs sm:text-sm text-slate-600 max-w-sm mx-auto">
+              <h3 className="text-xl font-bold text-[#202B3C]">Issue Report Submitted</h3>
+              <p className="text-xs sm:text-sm text-[#737B89] max-w-sm mx-auto">
                 Thank you for helping keep CampusFind accurate. Campus staff &amp; administrators have received your report and will review it shortly.
               </p>
             </div>
             <div className="pt-2">
               <button
                 onClick={onClose}
-                className="px-6 py-2.5 rounded-xl bg-slate-900 text-white font-semibold text-xs sm:text-sm hover:bg-slate-800 transition"
+                className="px-6 py-2.5 rounded-xl bg-[#4776E6] text-white font-semibold text-xs sm:text-sm hover:bg-[#385ec7] transition cursor-pointer"
               >
                 Done
               </button>
@@ -83,14 +83,14 @@ export function ReportComplaintModal({ item, onClose, onSuccess }) {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+            <div className="flex items-center gap-3 border-b border-[#E8EAF0] pb-4">
               <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center shrink-0">
                 <AlertTriangle className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Report an Issue or Dispute</h3>
-                <p className="text-xs text-slate-500">
-                  Regarding: <span className="font-semibold text-slate-800">{item?.title || 'This Item'}</span>
+                <h3 className="text-lg font-bold text-[#202B3C]">Report an Issue or Dispute</h3>
+                <p className="text-xs text-[#737B89]">
+                  Regarding: <span className="font-semibold text-[#202B3C]">{item?.title || 'This Item'}</span>
                 </p>
               </div>
             </div>
@@ -102,13 +102,13 @@ export function ReportComplaintModal({ item, onClose, onSuccess }) {
             )}
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#202B3C] mb-1.5">
                 Issue Category <span className="text-rose-500">*</span>
               </label>
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3.5 py-2.5 bg-[#F8F7F4] border border-[#E8EAF0] rounded-xl text-xs sm:text-sm text-[#202B3C] font-medium focus:outline-none focus:ring-2 focus:ring-[#4776E6]/40 cursor-pointer"
               >
                 {ISSUE_TYPES.map((t) => (
                   <option key={t.value} value={t.value}>
@@ -119,7 +119,7 @@ export function ReportComplaintModal({ item, onClose, onSuccess }) {
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#202B3C] mb-1.5">
                 Detailed Explanation <span className="text-rose-500">*</span>
               </label>
               <textarea
@@ -128,25 +128,25 @@ export function ReportComplaintModal({ item, onClose, onSuccess }) {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Explain why this listing needs attention, what is incorrect, or details regarding your dispute..."
-                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full p-3 bg-[#F8F7F4] border border-[#E8EAF0] rounded-xl text-xs sm:text-sm text-[#202B3C] placeholder-[#737B89] focus:outline-none focus:ring-2 focus:ring-[#4776E6]/40"
               />
-              <p className="text-[11px] text-slate-400 mt-1">
+              <p className="text-[11px] text-[#737B89] mt-1">
                 Your report will be reviewed confidentially by Vignan Campus Authorities.
               </p>
             </div>
 
-            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-[#E8EAF0]">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:bg-slate-100 transition"
+                className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-[#737B89] hover:bg-[#F8F7F4] transition cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={submitting || !description.trim()}
-                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white font-semibold text-xs sm:text-sm shadow-sm transition disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white font-semibold text-xs sm:text-sm shadow-sm transition disabled:opacity-50 cursor-pointer"
               >
                 {submitting ? (
                   <span>Submitting...</span>

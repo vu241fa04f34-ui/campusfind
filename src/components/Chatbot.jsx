@@ -154,7 +154,7 @@ export function Chatbot() {
       {!isOpen && (
         <button
           onClick={handleOpen}
-          className="group relative flex items-center gap-2.5 px-4 py-3 sm:px-5 sm:py-3.5 bg-gradient-to-r from-emerald-600 to-teal-700 text-white rounded-full shadow-lg shadow-emerald-700/30 hover:shadow-xl hover:shadow-emerald-700/40 hover:scale-105 active:scale-95 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-emerald-400/40"
+          className="group relative flex items-center gap-2.5 px-4 py-3 sm:px-5 sm:py-3.5 bg-gradient-to-r from-[#4776E6] to-[#385ec7] text-white rounded-full shadow-lg shadow-[#4776E6]/30 hover:shadow-xl hover:shadow-[#4776E6]/40 hover:scale-105 active:scale-95 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#4776E6]/30 cursor-pointer"
           aria-label="Open AI Lost and Found Assistant"
         >
           <div className="relative">
@@ -176,39 +176,39 @@ export function Chatbot() {
       {/* Chat Window Panel */}
       {isOpen && (
         <div
-          className={`bg-white rounded-3xl border border-slate-200/90 shadow-2xl flex flex-col overflow-hidden transition-all duration-200 ${
+          className={`clay-card bg-white rounded-3xl border border-[#E8EAF0] shadow-2xl flex flex-col overflow-hidden transition-all duration-200 ${
             isMinimized
               ? 'w-72 sm:w-80 h-14'
               : 'w-[92vw] sm:w-[410px] h-[560px] max-h-[82vh]'
           }`}
         >
           {/* Header */}
-          <div className="bg-gradient-to-r from-emerald-700 via-emerald-800 to-teal-800 text-white p-3.5 sm:p-4 flex items-center justify-between flex-shrink-0 shadow-sm">
+          <div className="bg-gradient-to-r from-[#4776E6] via-[#3d68d4] to-[#2e52b2] text-white p-3.5 sm:p-4 flex items-center justify-between flex-shrink-0 shadow-sm">
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="w-9 h-9 rounded-xl bg-white/10 backdrop-blur-xs flex items-center justify-center text-white border border-white/20 flex-shrink-0">
-                <Bot className="w-5 h-5 text-emerald-200" />
+                <Bot className="w-5 h-5 text-blue-100" />
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
                   <h3 className="font-bold text-sm sm:text-base tracking-tight truncate leading-tight">
                     CampusFind AI
                   </h3>
-                  <span className="text-[10px] bg-emerald-500/40 text-emerald-100 border border-emerald-400/30 px-1.5 py-0.2 rounded-full font-medium">
+                  <span className="text-[10px] bg-white/20 text-white border border-white/30 px-1.5 py-0.2 rounded-full font-medium">
                     Assistant
                   </span>
                 </div>
-                <p className="text-[11px] text-emerald-100/80 truncate">
+                <p className="text-[11px] text-blue-100/90 truncate">
                   Your helper for finding lost belongings
                 </p>
               </div>
             </div>
 
             {/* Header Action Buttons */}
-            <div className="flex items-center gap-1 text-emerald-100">
+            <div className="flex items-center gap-1 text-white">
               <button
                 onClick={handleClearChat}
                 title="Restart / Clear Conversation"
-                className="p-1.5 hover:bg-white/10 rounded-lg transition"
+                className="p-1.5 hover:bg-white/10 rounded-lg transition cursor-pointer"
                 aria-label="Restart chat"
               >
                 <RotateCcw className="w-4 h-4" />
@@ -216,7 +216,7 @@ export function Chatbot() {
               <button
                 onClick={handleMinimize}
                 title={isMinimized ? 'Expand' : 'Minimize'}
-                className="p-1.5 hover:bg-white/10 rounded-lg transition"
+                className="p-1.5 hover:bg-white/10 rounded-lg transition cursor-pointer"
                 aria-label="Minimize chat"
               >
                 <Minus className="w-4 h-4" />
@@ -224,7 +224,7 @@ export function Chatbot() {
               <button
                 onClick={handleClose}
                 title="Close Assistant"
-                className="p-1.5 hover:bg-white/10 rounded-lg transition"
+                className="p-1.5 hover:bg-white/10 rounded-lg transition cursor-pointer"
                 aria-label="Close chat"
               >
                 <X className="w-4 h-4" />
@@ -236,7 +236,7 @@ export function Chatbot() {
           {!isMinimized && (
             <>
               {/* Message scroll area */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/70">
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#F8F7F4]">
                 {messages.map((msg) => (
                   <ChatMessage
                     key={msg.id}
@@ -252,10 +252,10 @@ export function Chatbot() {
                 {/* Loading indicator */}
                 {isLoading && (
                   <div className="flex items-center gap-2 text-slate-400 text-xs py-2 px-1 animate-pulse">
-                    <div className="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                    <div className="w-6 h-6 rounded-lg bg-[#DDF4EE] text-[#4776E6] flex items-center justify-center">
                       <Sparkles className="w-3.5 h-3.5 animate-spin" />
                     </div>
-                    <span className="italic text-slate-500 font-medium">AI Assistant is thinking...</span>
+                    <span className="italic text-[#737B89] font-medium">AI Assistant is thinking...</span>
                   </div>
                 )}
 
@@ -263,7 +263,7 @@ export function Chatbot() {
               </div>
 
               {/* Input Area */}
-              <div className="p-3 sm:p-3.5 bg-white border-t border-slate-200/80">
+              <div className="p-3 sm:p-3.5 bg-white border-t border-[#E8EAF0]">
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
@@ -278,7 +278,7 @@ export function Chatbot() {
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown}
                     placeholder="Ask anything about lost items, login, uploads, or campus..."
-                    className="flex-1 px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500"
+                    className="flex-1 px-3.5 py-2.5 bg-[#F8F7F4] border border-[#E8EAF0] rounded-xl text-xs sm:text-sm text-[#202B3C] placeholder-[#737B89] focus:outline-none focus:ring-2 focus:ring-[#4776E6]/40 focus:border-[#4776E6]"
                     maxLength={300}
                     disabled={isLoading}
                   />
@@ -286,14 +286,14 @@ export function Chatbot() {
                   <button
                     type="submit"
                     disabled={!inputValue.trim() || isLoading}
-                    className="p-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 disabled:opacity-40 text-white shadow-sm transition flex-shrink-0"
+                    className="p-2.5 rounded-xl bg-[#4776E6] hover:bg-[#385ec7] active:bg-[#2e52b2] disabled:opacity-40 text-white shadow-sm transition flex-shrink-0 cursor-pointer"
                     aria-label="Send message"
                   >
                     <Send className="w-4 h-4" />
                   </button>
                 </form>
 
-                <div className="flex items-center justify-between text-[10px] text-slate-400 mt-1.5 px-1">
+                <div className="flex items-center justify-between text-[10px] text-[#737B89] mt-1.5 px-1">
                   <span>Powered by CampusFind Search</span>
                   <span>Enter to send</span>
                 </div>

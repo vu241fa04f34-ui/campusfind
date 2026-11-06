@@ -211,35 +211,35 @@ export function Home() {
   };
 
   return (
-    <div className="bg-[#f8faf9] text-slate-800 space-y-16 pb-20 selection:bg-emerald-200 selection:text-emerald-900">
+    <div className="bg-[#F8F7F4] text-[#202B3C] space-y-16 pb-20 selection:bg-[#DDF4EE] selection:text-[#202B3C]">
       {/* -------------------- 1. HERO SECTION (LIGHT CLAYMORPHISM) -------------------- */}
       <section className="relative overflow-hidden pt-12 pb-16 sm:pt-20 sm:pb-24">
         {/* Soft Ambient Pastel Background Gradients */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[700px] h-[450px] bg-gradient-to-b from-emerald-100/70 via-teal-50/50 to-transparent rounded-full blur-3xl" />
-          <div className="absolute top-20 -left-20 w-80 h-80 bg-sky-100/60 rounded-full blur-3xl" />
-          <div className="absolute top-40 -right-20 w-80 h-80 bg-mint-100/60 bg-emerald-50/80 rounded-full blur-3xl" />
+          <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[700px] h-[450px] bg-gradient-to-b from-[#4776E6]/10 via-[#DDF4EE]/40 to-transparent rounded-full blur-3xl" />
+          <div className="absolute top-20 -left-20 w-80 h-80 bg-[#4776E6]/10 rounded-full blur-3xl" />
+          <div className="absolute top-40 -right-20 w-80 h-80 bg-[#DDF4EE]/50 rounded-full blur-3xl" />
         </div>
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-7">
           {/* Vignan Trust Pill */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/90 border border-emerald-200/80 text-emerald-800 text-xs sm:text-sm font-bold shadow-[4px_6px_16px_rgba(16,185,129,0.12),-2px_-2px_10px_rgba(255,255,255,0.9)] backdrop-blur-xs">
-            <Sparkles className="w-4 h-4 text-emerald-600 animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/95 border border-[#E8EAF0] text-[#202B3C] text-xs sm:text-sm font-bold shadow-sm backdrop-blur-xs">
+            <Sparkles className="w-4 h-4 text-[#4776E6] animate-pulse" />
             <span>Vignan University, Guntur • Official Campus Lost &amp; Found</span>
           </div>
 
           {/* Hero Heading & Subtitle */}
           <div className="space-y-4 max-w-4xl mx-auto">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-slate-900 leading-[1.12]">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-[#202B3C] leading-[1.12]">
               Lost Something?{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4776E6] via-[#5c87ea] to-[#385ec7]">
                 Your Campus Has Your Back.
               </span>
             </h1>
-            <p className="text-lg sm:text-xl font-semibold text-emerald-900/80 tracking-wide">
+            <p className="text-lg sm:text-xl font-semibold text-[#737B89] tracking-wide">
               Your campus. Your community. Your belongings.
             </p>
-            <p className="max-w-2xl mx-auto text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
+            <p className="max-w-2xl mx-auto text-sm sm:text-base text-[#737B89] leading-relaxed font-normal">
               Connect effortlessly across all Vignan University academic blocks, student lounges, sports grounds, and dining facilities to safely locate and recover missing belongings.
             </p>
           </div>
@@ -249,7 +249,7 @@ export function Home() {
             <button
               type="button"
               onClick={scrollToBrowse}
-              className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl text-sm font-bold text-white clay-button-emerald cursor-pointer shadow-lg"
+              className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl text-sm font-bold text-white bg-[#4776E6] hover:bg-[#385ec7] shadow-lg shadow-[#4776E6]/25 cursor-pointer transition-all active:scale-95"
             >
               <Search className="w-4 h-4" />
               <span>Find My Item</span>
@@ -257,16 +257,16 @@ export function Home() {
 
             <Link
               to="/report"
-              className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl text-sm font-bold text-white clay-button-coral cursor-pointer shadow-lg"
+              className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl text-sm font-bold text-[#202B3C] bg-[#DDF4EE] hover:bg-[#c8ede4] border border-[#bfebe0] shadow-md cursor-pointer transition-all active:scale-95"
             >
-              <PlusCircle className="w-4 h-4" />
+              <PlusCircle className="w-4 h-4 text-[#4776E6]" />
               <span>Report an Item</span>
             </Link>
           </div>
 
           {/* Clay Search Capsule */}
           <div className="max-w-2xl mx-auto pt-3">
-            <div className="clay-card p-2 sm:p-2.5 bg-white/95">
+            <div className="clay-card p-2 sm:p-2.5 bg-white border border-[#E8EAF0]">
               <SearchBar
                 value={filters.search}
                 onChange={(val) => {
@@ -279,17 +279,17 @@ export function Home() {
           </div>
 
           {/* Friendly Floating Clay Badges */}
-          <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 pt-2 text-xs font-semibold text-slate-700">
-            <span className="px-3.5 py-1.5 rounded-2xl bg-white border border-slate-200/80 shadow-[3px_4px_10px_rgba(100,116,139,0.06)] flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 pt-2 text-xs font-semibold text-[#202B3C]">
+            <span className="px-3.5 py-1.5 rounded-2xl bg-white border border-[#E8EAF0] shadow-sm flex items-center gap-1.5">
               <Key className="w-3.5 h-3.5 text-teal-600" /> Keys &amp; Keychains
             </span>
-            <span className="px-3.5 py-1.5 rounded-2xl bg-white border border-slate-200/80 shadow-[3px_4px_10px_rgba(100,116,139,0.06)] flex items-center gap-1.5">
+            <span className="px-3.5 py-1.5 rounded-2xl bg-white border border-[#E8EAF0] shadow-sm flex items-center gap-1.5">
               <CreditCard className="w-3.5 h-3.5 text-rose-600" /> Student ID Cards
             </span>
-            <span className="px-3.5 py-1.5 rounded-2xl bg-white border border-slate-200/80 shadow-[3px_4px_10px_rgba(100,116,139,0.06)] flex items-center gap-1.5">
-              <Laptop className="w-3.5 h-3.5 text-indigo-600" /> Laptops &amp; Tech
+            <span className="px-3.5 py-1.5 rounded-2xl bg-white border border-[#E8EAF0] shadow-sm flex items-center gap-1.5">
+              <Laptop className="w-3.5 h-3.5 text-[#4776E6]" /> Laptops &amp; Tech
             </span>
-            <span className="px-3.5 py-1.5 rounded-2xl bg-white border border-slate-200/80 shadow-[3px_4px_10px_rgba(100,116,139,0.06)] flex items-center gap-1.5">
+            <span className="px-3.5 py-1.5 rounded-2xl bg-white border border-[#E8EAF0] shadow-sm flex items-center gap-1.5">
               <BookOpen className="w-3.5 h-3.5 text-amber-600" /> Records &amp; Books
             </span>
           </div>
@@ -298,60 +298,60 @@ export function Home() {
 
       {/* -------------------- 2. HOW CAMPUSFIND WORKS (4 STEPS) -------------------- */}
       <section id="how-it-works" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="clay-card p-6 sm:p-10 lg:p-14 bg-gradient-to-b from-white via-white to-emerald-50/30">
+        <div className="clay-card p-6 sm:p-10 lg:p-14 bg-white border border-[#E8EAF0]">
           <div className="max-w-2xl mx-auto text-center space-y-2 mb-10">
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-100/70 px-3 py-1 rounded-full border border-emerald-200/60">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#4776E6] bg-[#DDF4EE] px-3 py-1 rounded-full border border-[#bfebe0]">
               Recovery Process
             </span>
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[#202B3C]">
               How CampusFind Works
             </h2>
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-[#737B89]">
               A 4-step secure recovery pathway built specifically for Vignan University's trusted campus environment.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Step 1: Report */}
-            <div className="clay-card p-5 bg-white border border-emerald-100/80 flex flex-col items-center text-center space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-white flex items-center justify-center font-black text-lg shadow-md shadow-emerald-500/25">
+            <div className="clay-card p-5 bg-[#F8F7F4] border border-[#E8EAF0] flex flex-col items-center text-center space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#4776E6] to-[#688ff0] text-white flex items-center justify-center font-black text-lg shadow-md shadow-[#4776E6]/25">
                 1
               </div>
-              <h3 className="font-extrabold text-slate-900 text-base">Report</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <h3 className="font-extrabold text-[#202B3C] text-base">Report</h3>
+              <p className="text-xs text-[#737B89] leading-relaxed">
                 Publish a compulsory photo, last known campus location (e.g. Library or A-Block), and approximate time.
               </p>
             </div>
 
             {/* Step 2: Discover */}
-            <div className="clay-card p-5 bg-white border border-emerald-100/80 flex flex-col items-center text-center space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-teal-500 to-cyan-400 text-white flex items-center justify-center font-black text-lg shadow-md shadow-teal-500/25">
+            <div className="clay-card p-5 bg-[#F8F7F4] border border-[#E8EAF0] flex flex-col items-center text-center space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#385ec7] to-[#4776E6] text-white flex items-center justify-center font-black text-lg shadow-md shadow-[#385ec7]/25">
                 2
               </div>
-              <h3 className="font-extrabold text-slate-900 text-base">Discover</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <h3 className="font-extrabold text-[#202B3C] text-base">Discover</h3>
+              <p className="text-xs text-[#737B89] leading-relaxed">
                 Browse real-time reports instantly or receive automated smart match alerts when matching items are found.
               </p>
             </div>
 
             {/* Step 3: Verify */}
-            <div className="clay-card p-5 bg-white border border-emerald-100/80 flex flex-col items-center text-center space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-400 text-white flex items-center justify-center font-black text-lg shadow-md shadow-sky-500/25">
+            <div className="clay-card p-5 bg-[#F8F7F4] border border-[#E8EAF0] flex flex-col items-center text-center space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-teal-500 to-[#DDF4EE] text-[#202B3C] flex items-center justify-center font-black text-lg shadow-md">
                 3
               </div>
-              <h3 className="font-extrabold text-slate-900 text-base">Verify</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <h3 className="font-extrabold text-[#202B3C] text-base">Verify</h3>
+              <p className="text-xs text-[#737B89] leading-relaxed">
                 Confirm ownership securely using unique challenge identifiers (e.g. custom lock screen, sticker, pouch contents).
               </p>
             </div>
 
             {/* Step 4: Recover */}
-            <div className="clay-card p-5 bg-white border border-emerald-100/80 flex flex-col items-center text-center space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-emerald-700 text-white flex items-center justify-center font-black text-lg shadow-md shadow-emerald-600/25">
+            <div className="clay-card p-5 bg-[#F8F7F4] border border-[#E8EAF0] flex flex-col items-center text-center space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#4776E6] to-[#385ec7] text-white flex items-center justify-center font-black text-lg shadow-md shadow-[#4776E6]/25">
                 4
               </div>
-              <h3 className="font-extrabold text-slate-900 text-base">Recover</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <h3 className="font-extrabold text-[#202B3C] text-base">Recover</h3>
+              <p className="text-xs text-[#737B89] leading-relaxed">
                 Conduct a daylight hand-off at verified campus desks (Library reception, Security office) and close the report!
               </p>
             </div>
@@ -363,14 +363,14 @@ export function Home() {
       <section ref={listingsRef} id="browse-listings" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 pt-4">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#4776E6] uppercase tracking-wider mb-1">
               <Clock className="w-3.5 h-3.5" />
               <span>Live Campus Feed</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[#202B3C]">
               Recently Reported Items
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            <p className="text-xs sm:text-sm text-[#737B89] mt-1">
               Live updates directly from Cloud Firestore. Browse reported belongings across campus.
             </p>
           </div>
@@ -378,7 +378,7 @@ export function Home() {
           {(filters.search || filters.category !== 'all' || filters.location !== 'all' || filters.type !== 'all') && (
             <button
               onClick={handleResetFilters}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 transition shadow-xs self-start md:self-auto cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E8EAF0] text-xs font-semibold text-[#202B3C] bg-white hover:bg-[#F8F7F4] transition shadow-xs self-start md:self-auto cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Reset Filters</span>
@@ -394,7 +394,7 @@ export function Home() {
         )}
 
         {/* Filter Bar */}
-        <div className="clay-card p-3 bg-white">
+        <div className="clay-card p-3 bg-white border border-[#E8EAF0]">
           <FilterBar
             filters={filters}
             onFilterChange={handleFilterChange}
@@ -428,15 +428,15 @@ export function Home() {
 
       {/* -------------------- 4. CAMPUS LOCATIONS SECTION -------------------- */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="clay-card p-6 sm:p-10 bg-gradient-to-br from-white via-slate-50/50 to-sky-50/30 space-y-6">
+        <div className="clay-card p-6 sm:p-10 bg-white border border-[#E8EAF0] space-y-6">
           <div className="max-w-2xl space-y-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-sky-600 bg-sky-100/70 px-3 py-1 rounded-full border border-sky-200/60">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#4776E6] bg-[#DDF4EE] px-3 py-1 rounded-full border border-[#bfebe0]">
               Campus Hotspots
             </span>
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 pt-1">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[#202B3C] pt-1">
               Explore by Campus Location
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600">
+            <p className="text-xs sm:text-sm text-[#737B89]">
               Select any Vignan University building to immediately view items lost or found there.
             </p>
           </div>
@@ -450,22 +450,22 @@ export function Home() {
                   onClick={() => handleSelectLocation(loc.name)}
                   className={`clay-card p-4 text-left transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-sky-50 border-sky-300 ring-2 ring-sky-400/40'
-                      : 'bg-white hover:bg-sky-50/40 border-slate-100'
+                      ? 'bg-[#DDF4EE]/40 border-[#4776E6] ring-2 ring-[#4776E6]/30'
+                      : 'bg-white hover:bg-[#F8F7F4] border-[#E8EAF0]'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-xl bg-[#DDF4EE] text-[#4776E6] flex items-center justify-center">
                         <Building2 className="w-4 h-4" />
                       </div>
-                      <h4 className="font-extrabold text-slate-900 text-sm">{loc.name}</h4>
+                      <h4 className="font-extrabold text-[#202B3C] text-sm">{loc.name}</h4>
                     </div>
-                    <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+                    <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-[#F8F7F4] text-[#737B89] border border-[#E8EAF0]">
                       {loc.tag}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500 line-clamp-1">{loc.desc}</p>
+                  <p className="text-xs text-[#737B89] line-clamp-1">{loc.desc}</p>
                 </button>
               );
             })}
@@ -475,15 +475,15 @@ export function Home() {
 
       {/* -------------------- 5. ITEM CATEGORIES SECTION -------------------- */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="clay-card p-6 sm:p-10 bg-gradient-to-br from-white via-slate-50/50 to-emerald-50/30 space-y-6">
+        <div className="clay-card p-6 sm:p-10 bg-white border border-[#E8EAF0] space-y-6">
           <div className="max-w-2xl space-y-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-100/70 px-3 py-1 rounded-full border border-emerald-200/60">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#4776E6] bg-[#DDF4EE] px-3 py-1 rounded-full border border-[#bfebe0]">
               Classified Items
             </span>
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 pt-1">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[#202B3C] pt-1">
               Browse by Item Category
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600">
+            <p className="text-xs sm:text-sm text-[#737B89]">
               Filter campus listings by object category to accelerate item identification.
             </p>
           </div>
@@ -498,15 +498,15 @@ export function Home() {
                   onClick={() => handleSelectCategory(cat.name)}
                   className={`clay-card p-4 text-left transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-emerald-50 border-emerald-300 ring-2 ring-emerald-400/40'
-                      : 'bg-white hover:bg-emerald-50/40 border-slate-100'
+                      ? 'bg-[#DDF4EE]/40 border-[#4776E6] ring-2 ring-[#4776E6]/30'
+                      : 'bg-white hover:bg-[#F8F7F4] border-[#E8EAF0]'
                   }`}
                 >
-                  <div className={`w-10 h-10 rounded-2xl ${cat.bg} ${cat.color} flex items-center justify-center mb-2.5 shadow-inner`}>
+                  <div className={`w-10 h-10 rounded-2xl ${cat.bg} ${cat.color} flex items-center justify-center mb-2.5 shadow-xs`}>
                     <IconComp className="w-5 h-5" />
                   </div>
-                  <h4 className="font-extrabold text-slate-900 text-sm">{cat.name}</h4>
-                  <p className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">{cat.desc}</p>
+                  <h4 className="font-extrabold text-[#202B3C] text-sm">{cat.name}</h4>
+                  <p className="text-[11px] text-[#737B89] line-clamp-1 mt-0.5">{cat.desc}</p>
                 </button>
               );
             })}
@@ -516,52 +516,52 @@ export function Home() {
 
       {/* -------------------- 6. AI CHATBOT INTRODUCTION SECTION -------------------- */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="clay-card p-6 sm:p-10 lg:p-12 bg-gradient-to-br from-emerald-50/80 via-teal-50/60 to-white border border-emerald-200/70">
+        <div className="clay-card p-6 sm:p-10 lg:p-12 bg-gradient-to-br from-white via-[#f0f4fe] to-[#DDF4EE]/30 border border-[#E8EAF0]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-8 space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-200">
-                <Bot className="w-4 h-4 text-emerald-600" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#DDF4EE] text-[#202B3C] text-xs font-bold border border-[#bfebe0]">
+                <Bot className="w-4 h-4 text-[#4776E6]" />
                 <span>Smart Campus AI Assistant</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 leading-tight">
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[#202B3C] leading-tight">
                 Ask CampusFind AI Anything About Lost &amp; Found
               </h2>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Need immediate help locating an item? Our intelligent assistant understands conversational questions like <em className="text-slate-800 font-medium">"Did anyone find a blue bottle near Central Library today?"</em> or <em className="text-slate-800 font-medium">"Where do I submit a found student ID?"</em>.
+              <p className="text-sm text-[#737B89] leading-relaxed">
+                Need immediate help locating an item? Our intelligent assistant understands conversational questions like <em className="text-[#202B3C] font-medium">"Did anyone find a blue bottle near Central Library today?"</em> or <em className="text-[#202B3C] font-medium">"Where do I submit a found student ID?"</em>.
               </p>
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 <button
                   type="button"
                   onClick={openAIChatbot}
-                  className="clay-button-emerald px-6 py-3 rounded-2xl text-xs sm:text-sm font-bold text-white inline-flex items-center gap-2 cursor-pointer"
+                  className="bg-[#4776E6] hover:bg-[#385ec7] px-6 py-3 rounded-2xl text-xs sm:text-sm font-bold text-white inline-flex items-center gap-2 cursor-pointer shadow-md transition-all active:scale-95"
                 >
                   <Bot className="w-4 h-4" />
                   <span>Chat with AI Assistant</span>
                 </button>
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-[#737B89]">
                   Available 24/7 in the bottom-right bubble.
                 </span>
               </div>
             </div>
 
             <div className="lg:col-span-4">
-              <div className="clay-card p-5 bg-white space-y-3 border border-emerald-100">
-                <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
-                  <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs">
+              <div className="clay-card p-5 bg-white space-y-3 border border-[#E8EAF0]">
+                <div className="flex items-center gap-2.5 border-b border-[#E8EAF0] pb-3">
+                  <div className="w-8 h-8 rounded-full bg-[#4776E6] text-white flex items-center justify-center font-bold text-xs">
                     AI
                   </div>
                   <div>
-                    <p className="font-bold text-slate-900 text-xs">Campus Assistant</p>
-                    <span className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Active
+                    <p className="font-bold text-[#202B3C] text-xs">Campus Assistant</p>
+                    <span className="text-[10px] text-[#4776E6] font-semibold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#4776E6] animate-pulse" /> Active
                     </span>
                   </div>
                 </div>
                 <div className="space-y-2 text-xs">
-                  <div className="bg-slate-50 p-2.5 rounded-xl text-slate-700">
+                  <div className="bg-[#F8F7F4] p-2.5 rounded-xl text-[#202B3C] border border-[#E8EAF0]">
                     "I lost my blue backpack near A-Block yesterday afternoon."
                   </div>
-                  <div className="bg-emerald-50 p-2.5 rounded-xl text-emerald-900 font-medium border border-emerald-100">
+                  <div className="bg-[#DDF4EE] p-2.5 rounded-xl text-[#202B3C] font-medium border border-[#bfebe0]">
                     "Found 1 matching bag reported at A-Block. Let me show you the verification details!"
                   </div>
                 </div>
@@ -573,56 +573,56 @@ export function Home() {
 
       {/* -------------------- 7. WHY CAMPUSFIND SECTION -------------------- */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="clay-card p-6 sm:p-10 lg:p-12 bg-white space-y-8">
+        <div className="clay-card p-6 sm:p-10 lg:p-12 bg-white border border-[#E8EAF0] space-y-8">
           <div className="max-w-2xl mx-auto text-center space-y-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-100/70 px-3 py-1 rounded-full border border-emerald-200/60">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#4776E6] bg-[#DDF4EE] px-3 py-1 rounded-full border border-[#bfebe0]">
               Community Benefits
             </span>
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[#202B3C]">
               Why Vignan Students Trust CampusFind
             </h2>
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-[#737B89]">
               Say goodbye to scattered WhatsApp groups and missing notices on campus boards.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="clay-card p-5 bg-emerald-50/30 border border-emerald-100 space-y-2">
-              <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+            <div className="clay-card p-5 bg-[#F8F7F4] border border-[#E8EAF0] space-y-2">
+              <div className="w-10 h-10 rounded-2xl bg-[#DDF4EE] text-[#4776E6] flex items-center justify-center">
                 <ShieldCheck className="w-5 h-5" />
               </div>
-              <h4 className="font-bold text-slate-900 text-sm">100% University Verified</h4>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <h4 className="font-bold text-[#202B3C] text-sm">100% University Verified</h4>
+              <p className="text-xs text-[#737B89] leading-relaxed">
                 Every account is authenticated through student email, Google SSO, or mobile verification.
               </p>
             </div>
 
-            <div className="clay-card p-5 bg-teal-50/30 border border-teal-100 space-y-2">
+            <div className="clay-card p-5 bg-[#F8F7F4] border border-[#E8EAF0] space-y-2">
               <div className="w-10 h-10 rounded-2xl bg-teal-100 text-teal-700 flex items-center justify-center">
                 <Lock className="w-5 h-5" />
               </div>
-              <h4 className="font-bold text-slate-900 text-sm">Privacy Protection</h4>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <h4 className="font-bold text-[#202B3C] text-sm">Privacy Protection</h4>
+              <p className="text-xs text-[#737B89] leading-relaxed">
                 Direct phone numbers and emails remain concealed until ownership challenges are fulfilled.
               </p>
             </div>
 
-            <div className="clay-card p-5 bg-sky-50/30 border border-sky-100 space-y-2">
+            <div className="clay-card p-5 bg-[#F8F7F4] border border-[#E8EAF0] space-y-2">
               <div className="w-10 h-10 rounded-2xl bg-sky-100 text-sky-700 flex items-center justify-center">
                 <Sparkles className="w-5 h-5" />
               </div>
-              <h4 className="font-bold text-slate-900 text-sm">Smart NLP Matching</h4>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <h4 className="font-bold text-[#202B3C] text-sm">Smart NLP Matching</h4>
+              <p className="text-xs text-[#737B89] leading-relaxed">
                 Automated similarity detection cross-references Lost and Found reports with category keywords.
               </p>
             </div>
 
-            <div className="clay-card p-5 bg-purple-50/30 border border-purple-100 space-y-2">
-              <div className="w-10 h-10 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center">
+            <div className="clay-card p-5 bg-[#F8F7F4] border border-[#E8EAF0] space-y-2">
+              <div className="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center">
                 <HeartHandshake className="w-5 h-5" />
               </div>
-              <h4 className="font-bold text-slate-900 text-sm">Staff &amp; Security Network</h4>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <h4 className="font-bold text-[#202B3C] text-sm">Staff &amp; Security Network</h4>
+              <p className="text-xs text-[#737B89] leading-relaxed">
                 Campus security authorities and facility coordinators moderate dispute resolutions.
               </p>
             </div>
@@ -632,56 +632,56 @@ export function Home() {
 
       {/* -------------------- 8. SAFETY & PRIVACY SECTION -------------------- */}
       <section id="trust-safety" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="clay-card p-6 sm:p-10 lg:p-12 bg-gradient-to-br from-white via-slate-50 to-emerald-50/40 border border-emerald-100 space-y-6">
+        <div className="clay-card p-6 sm:p-10 lg:p-12 bg-white border border-[#E8EAF0] space-y-6">
           <div className="max-w-2xl space-y-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-200">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#4776E6] bg-[#DDF4EE] px-3 py-1 rounded-full border border-[#bfebe0]">
               Honor Code &amp; Security
             </span>
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[#202B3C]">
               Campus Safety &amp; Privacy Protocol
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600">
+            <p className="text-xs sm:text-sm text-[#737B89]">
               Guidelines to guarantee safe recovery hand-offs for both finders and owners.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="clay-card p-4 bg-white border border-slate-100 space-y-2">
+            <div className="clay-card p-4 bg-[#F8F7F4] border border-[#E8EAF0] space-y-2">
               <div className="w-8 h-8 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
                 <Lock className="w-4 h-4" />
               </div>
-              <h4 className="font-extrabold text-slate-900 text-xs">Never Share Passwords</h4>
-              <p className="text-[11px] text-slate-500 leading-relaxed">
+              <h4 className="font-extrabold text-[#202B3C] text-xs">Never Share Passwords</h4>
+              <p className="text-[11px] text-[#737B89] leading-relaxed">
                 Never publish phone passcodes, OTPs, or Aadhaar numbers in descriptions.
               </p>
             </div>
 
-            <div className="clay-card p-4 bg-white border border-slate-100 space-y-2">
-              <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <div className="clay-card p-4 bg-[#F8F7F4] border border-[#E8EAF0] space-y-2">
+              <div className="w-8 h-8 rounded-xl bg-[#DDF4EE] text-[#4776E6] flex items-center justify-center">
                 <CheckCircle2 className="w-4 h-4" />
               </div>
-              <h4 className="font-extrabold text-slate-900 text-xs">Verify Secret Marks</h4>
-              <p className="text-[11px] text-slate-500 leading-relaxed">
+              <h4 className="font-extrabold text-[#202B3C] text-xs">Verify Secret Marks</h4>
+              <p className="text-[11px] text-[#737B89] leading-relaxed">
                 Require claimants to confirm hidden identifiers before agreeing to an in-person exchange.
               </p>
             </div>
 
-            <div className="clay-card p-4 bg-white border border-slate-100 space-y-2">
+            <div className="clay-card p-4 bg-[#F8F7F4] border border-[#E8EAF0] space-y-2">
               <div className="w-8 h-8 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
                 <MapPin className="w-4 h-4" />
               </div>
-              <h4 className="font-extrabold text-slate-900 text-xs">Daylight Meet-ups</h4>
-              <p className="text-[11px] text-slate-500 leading-relaxed">
+              <h4 className="font-extrabold text-[#202B3C] text-xs">Daylight Meet-ups</h4>
+              <p className="text-[11px] text-[#737B89] leading-relaxed">
                 Always meet at Central Library reception or A-Block / U-Block information counters.
               </p>
             </div>
 
-            <div className="clay-card p-4 bg-white border border-slate-100 space-y-2">
+            <div className="clay-card p-4 bg-[#F8F7F4] border border-[#E8EAF0] space-y-2">
               <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
                 <Shield className="w-4 h-4" />
               </div>
-              <h4 className="font-extrabold text-slate-900 text-xs">Zero Cash Demands</h4>
-              <p className="text-[11px] text-slate-500 leading-relaxed">
+              <h4 className="font-extrabold text-[#202B3C] text-xs">Zero Cash Demands</h4>
+              <p className="text-[11px] text-[#737B89] leading-relaxed">
                 CampusFind is a community service. Demanding money for returned belongings violates the honor code.
               </p>
             </div>
@@ -691,15 +691,15 @@ export function Home() {
 
       {/* -------------------- 9. FAQ ACCORDION SECTION -------------------- */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="clay-card p-6 sm:p-10 bg-white space-y-6">
+        <div className="clay-card p-6 sm:p-10 bg-white border border-[#E8EAF0] space-y-6">
           <div className="text-center space-y-2 max-w-xl mx-auto">
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-100/70 px-3 py-1 rounded-full border border-emerald-200/60">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#4776E6] bg-[#DDF4EE] px-3 py-1 rounded-full border border-[#bfebe0]">
               Help Center
             </span>
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-[#202B3C]">
               Frequently Asked Questions
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600">
+            <p className="text-xs sm:text-sm text-[#737B89]">
               Common questions from Vignan University students and faculty.
             </p>
           </div>
@@ -710,20 +710,20 @@ export function Home() {
               return (
                 <div
                   key={index}
-                  className="clay-card overflow-hidden bg-slate-50/60 border border-slate-100 transition-all"
+                  className="clay-card overflow-hidden bg-[#F8F7F4] border border-[#E8EAF0] transition-all"
                 >
                   <button
                     type="button"
                     onClick={() => setOpenFaq(isOpen ? null : index)}
-                    className="w-full p-4 sm:p-5 flex items-center justify-between gap-3 text-left font-bold text-slate-900 text-sm hover:text-emerald-700 transition cursor-pointer"
+                    className="w-full p-4 sm:p-5 flex items-center justify-between gap-3 text-left font-bold text-[#202B3C] text-sm hover:text-[#4776E6] transition cursor-pointer"
                   >
                     <span>{faq.question}</span>
-                    <div className="w-6 h-6 rounded-full bg-white text-slate-500 flex items-center justify-center shrink-0 border border-slate-200">
+                    <div className="w-6 h-6 rounded-full bg-white text-[#737B89] flex items-center justify-center shrink-0 border border-[#E8EAF0]">
                       {isOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                     </div>
                   </button>
                   {isOpen && (
-                    <div className="px-4 pb-4 sm:px-5 sm:pb-5 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3 bg-white">
+                    <div className="px-4 pb-4 sm:px-5 sm:pb-5 text-xs sm:text-sm text-[#737B89] leading-relaxed border-t border-[#E8EAF0] pt-3 bg-white">
                       {faq.answer}
                     </div>
                   )}
@@ -736,7 +736,7 @@ export function Home() {
 
       {/* -------------------- 10. FINAL CALL TO ACTION -------------------- */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="clay-card p-8 sm:p-12 lg:p-14 text-center space-y-6 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white relative overflow-hidden shadow-xl">
+        <div className="clay-card p-8 sm:p-12 lg:p-14 text-center space-y-6 bg-gradient-to-r from-[#4776E6] via-[#3d68d4] to-[#2e52b2] text-white relative overflow-hidden shadow-xl border-none">
           <div className="absolute -top-12 -left-12 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none" />
           <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none" />
 
@@ -744,7 +744,7 @@ export function Home() {
             <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
               Ready to Reunite Belongings on Campus?
             </h2>
-            <p className="text-sm sm:text-base text-emerald-100 leading-relaxed">
+            <p className="text-sm sm:text-base text-blue-100 leading-relaxed">
               Join thousands of Vignan University students and staff. Help someone recover their valuables or find what you lost today.
             </p>
           </div>
@@ -752,14 +752,14 @@ export function Home() {
           <div className="flex flex-wrap items-center justify-center gap-4 relative z-10 pt-2">
             <Link
               to="/report"
-              className="px-7 py-3.5 rounded-2xl bg-white text-emerald-800 font-extrabold text-sm shadow-lg hover:bg-emerald-50 active:scale-95 transition-all"
+              className="px-7 py-3.5 rounded-2xl bg-white text-[#4776E6] font-extrabold text-sm shadow-lg hover:bg-[#F8F7F4] active:scale-95 transition-all"
             >
               Report an Item Now
             </Link>
             <button
               type="button"
               onClick={scrollToBrowse}
-              className="px-7 py-3.5 rounded-2xl bg-emerald-800/60 hover:bg-emerald-800/80 border border-white/30 text-white font-extrabold text-sm backdrop-blur-xs transition-all cursor-pointer"
+              className="px-7 py-3.5 rounded-2xl bg-white/15 hover:bg-white/25 border border-white/30 text-white font-extrabold text-sm backdrop-blur-xs transition-all cursor-pointer"
             >
               Explore All Listings
             </button>

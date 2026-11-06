@@ -94,11 +94,11 @@ export function LocationSelect({
   const getCategoryIcon = (category) => {
     switch (category) {
       case 'Blocks':
-        return <Building2 className="w-3.5 h-3.5 text-emerald-600" />;
+        return <Building2 className="w-3.5 h-3.5 text-[#4776E6]" />;
       case 'Grounds':
         return <Trophy className="w-3.5 h-3.5 text-amber-600" />;
       default:
-        return <Navigation className="w-3.5 h-3.5 text-teal-600" />;
+        return <Navigation className="w-3.5 h-3.5 text-[#4776E6]" />;
     }
   };
 
@@ -111,34 +111,34 @@ export function LocationSelect({
         onClick={() => setIsOpen((prev) => !prev)}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
-        className={`w-full min-h-[46px] px-3.5 py-2.5 bg-slate-50 border rounded-xl text-left text-sm flex items-center justify-between gap-2 transition cursor-pointer select-none ${
+        className={`w-full min-h-[46px] px-3.5 py-2.5 bg-[#F8F7F4] border rounded-xl text-left text-sm flex items-center justify-between gap-2 transition cursor-pointer select-none ${
           isOpen
-            ? 'border-emerald-500 ring-2 ring-emerald-500/20 bg-white'
+            ? 'border-[#4776E6] ring-2 ring-[#4776E6]/20 bg-white'
             : error
             ? 'border-rose-400 bg-rose-50/30'
-            : 'border-slate-200 hover:border-slate-300'
+            : 'border-[#E8EAF0] hover:border-slate-300'
         }`}
       >
         <div className="flex items-center gap-2.5 truncate">
-          <MapPin className={`w-4 h-4 flex-shrink-0 ${value ? 'text-emerald-600' : 'text-slate-400'}`} />
-          <span className={`truncate font-medium ${value ? 'text-slate-900' : 'text-slate-400'}`}>
+          <MapPin className={`w-4 h-4 flex-shrink-0 ${value ? 'text-[#4776E6]' : 'text-[#737B89]'}`} />
+          <span className={`truncate font-medium ${value ? 'text-[#202B3C]' : 'text-[#737B89]'}`}>
             {value || placeholder}
           </span>
         </div>
         <ChevronDown
-          className={`w-4 h-4 text-slate-400 flex-shrink-0 transition-transform duration-200 ${
-            isOpen ? 'rotate-180 text-emerald-600' : ''
+          className={`w-4 h-4 text-[#737B89] flex-shrink-0 transition-transform duration-200 ${
+            isOpen ? 'rotate-180 text-[#4776E6]' : ''
           }`}
         />
       </button>
 
       {/* Dropdown Menu Popover */}
       {isOpen && (
-        <div className="absolute left-0 right-0 z-50 mt-1 bg-white border border-slate-200/90 rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        <div className="clay-card absolute left-0 right-0 z-50 mt-1 bg-white border border-[#E8EAF0] rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
           {/* Search Header */}
-          <div className="p-2.5 border-b border-slate-100 bg-slate-50/70">
+          <div className="p-2.5 border-b border-[#E8EAF0] bg-[#F8F7F4]">
             <div className="relative">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-[#737B89] absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 ref={searchInputRef}
                 type="text"
@@ -158,13 +158,13 @@ export function LocationSelect({
                   }
                 }}
                 placeholder="Search campus blocks, grounds..."
-                className="w-full pl-9 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500"
+                className="w-full pl-9 pr-8 py-2 bg-white border border-[#E8EAF0] rounded-xl text-xs sm:text-sm text-[#202B3C] placeholder:text-[#737B89] focus:outline-none focus:ring-2 focus:ring-[#4776E6]/40 focus:border-[#4776E6]"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#737B89] hover:text-[#202B3C] p-0.5"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -173,10 +173,10 @@ export function LocationSelect({
           </div>
 
           {/* Location Group Lists */}
-          <div className="max-h-64 sm:max-h-72 overflow-y-auto p-2 space-y-3 divide-y divide-slate-100/60" role="listbox">
+          <div className="max-h-64 sm:max-h-72 overflow-y-auto p-2 space-y-3 divide-y divide-[#E8EAF0]" role="listbox">
             {totalMatches === 0 ? (
               <div className="py-6 px-4 text-center space-y-2">
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-[#737B89]">
                   No campus location matching "{searchQuery}"
                 </p>
                 <button
@@ -187,7 +187,7 @@ export function LocationSelect({
                     setIsOpen(false);
                     setSearchQuery('');
                   }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#4776E6] bg-[#DDF4EE] hover:bg-[#c8ede4] transition cursor-pointer"
                 >
                   <span>Use "{searchQuery}" as custom location</span>
                 </button>
@@ -197,7 +197,7 @@ export function LocationSelect({
                 {filteredGroups.map((group) => (
                   <div key={group.category} className="pt-2 first:pt-0">
                     {/* Category Label */}
-                    <div className="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5 select-none">
+                    <div className="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-[#737B89] flex items-center gap-1.5 select-none">
                       {getCategoryIcon(group.category)}
                       <span>{group.category}</span>
                     </div>
@@ -215,12 +215,12 @@ export function LocationSelect({
                             aria-selected={isSelected}
                             className={`w-full min-h-[42px] px-3 py-2 rounded-xl text-left text-xs sm:text-sm font-medium flex items-center justify-between transition cursor-pointer select-none ${
                               isSelected
-                                ? 'bg-emerald-50 text-emerald-900 font-semibold'
-                                : 'text-slate-700 hover:bg-slate-100/80 active:bg-slate-200'
+                                ? 'bg-[#DDF4EE] text-[#202B3C] font-semibold'
+                                : 'text-[#202B3C] hover:bg-[#F8F7F4] active:bg-[#E8EAF0]'
                             }`}
                           >
                             <span>{loc}</span>
-                            {isSelected && <Check className="w-4 h-4 text-emerald-600 flex-shrink-0" />}
+                            {isSelected && <Check className="w-4 h-4 text-[#4776E6] flex-shrink-0" />}
                           </button>
                         );
                       })}
@@ -231,7 +231,7 @@ export function LocationSelect({
                 {/* "Other" Option */}
                 {showOtherOption && (
                   <div className="pt-2">
-                    <div className="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-slate-400 select-none">
+                    <div className="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-[#737B89] select-none">
                       Unlisted Location
                     </div>
                     <div className="mt-1">
@@ -242,17 +242,17 @@ export function LocationSelect({
                         aria-selected={isOtherSelected}
                         className={`w-full min-h-[42px] px-3 py-2 rounded-xl text-left text-xs sm:text-sm font-medium flex items-center justify-between transition cursor-pointer select-none ${
                           isOtherSelected
-                            ? 'bg-emerald-50 text-emerald-900 font-semibold'
-                            : 'text-slate-700 hover:bg-slate-100/80 active:bg-slate-200'
+                            ? 'bg-[#DDF4EE] text-[#202B3C] font-semibold'
+                            : 'text-[#202B3C] hover:bg-[#F8F7F4] active:bg-[#E8EAF0]'
                         }`}
                       >
                         <div className="flex flex-col">
                           <span>Other</span>
-                          <span className="text-[11px] text-slate-400 font-normal">
+                          <span className="text-[11px] text-[#737B89] font-normal">
                             Specify an unlisted campus area or workshop
                           </span>
                         </div>
-                        {isOtherSelected && <Check className="w-4 h-4 text-emerald-600 flex-shrink-0" />}
+                        {isOtherSelected && <Check className="w-4 h-4 text-[#4776E6] flex-shrink-0" />}
                       </button>
                     </div>
                   </div>
@@ -265,10 +265,10 @@ export function LocationSelect({
 
       {/* Custom Location Input (Visible when "Other" is chosen) */}
       {isOtherSelected && (
-        <div className="p-3 bg-emerald-50/50 border border-emerald-200/80 rounded-xl space-y-1.5 animate-in fade-in duration-200">
+        <div className="p-3 bg-[#DDF4EE]/40 border border-[#bfebe0] rounded-xl space-y-1.5 animate-in fade-in duration-200">
           <label
             htmlFor={`${id}-custom`}
-            className="block text-[11px] font-bold uppercase tracking-wider text-emerald-900"
+            className="block text-[11px] font-bold uppercase tracking-wider text-[#202B3C]"
           >
             Specify Campus Location <span className="text-rose-500">*</span>
           </label>
@@ -279,9 +279,9 @@ export function LocationSelect({
             value={customLocation}
             onChange={handleCustomChange}
             placeholder="e.g. Mechanical Workshop, Seminar Hall 2, Gate 1..."
-            className="w-full px-3 py-2 bg-white border border-emerald-300 rounded-lg text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full px-3 py-2 bg-white border border-[#bfebe0] rounded-lg text-xs sm:text-sm text-[#202B3C] placeholder:text-[#737B89] focus:outline-none focus:ring-2 focus:ring-[#4776E6]/40"
           />
-          <p className="text-[11px] text-emerald-700">
+          <p className="text-[11px] text-[#737B89]">
             This custom location will be saved with your report.
           </p>
         </div>

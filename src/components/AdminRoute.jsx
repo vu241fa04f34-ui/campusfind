@@ -66,7 +66,7 @@ export function AdminRoute({ children }) {
   if (!isAdmin) {
     return (
       <div className="max-w-xl mx-auto px-4 py-16 text-center">
-        <div className="bg-white rounded-3xl border border-rose-200/80 shadow-xl p-8 sm:p-10 space-y-6">
+        <div className="clay-card bg-white rounded-3xl border border-[#E8EAF0] shadow-xl p-8 sm:p-10 space-y-6">
           <div className="w-16 h-16 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center mx-auto text-rose-600">
             <ShieldAlert className="w-8 h-8" />
           </div>
@@ -75,18 +75,18 @@ export function AdminRoute({ children }) {
             <span className="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-rose-100 text-rose-800">
               403 • Access Restricted
             </span>
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-2xl font-black text-[#202B3C] tracking-tight">
               Administrator Privileges Required
             </h1>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-md mx-auto">
-              This area is restricted to verified campus staff and system administrators. Your account (<span className="font-semibold text-slate-800">{currentUser.email || currentUser.displayName}</span>) does not possess verified administrator credentials.
+            <p className="text-xs sm:text-sm text-[#737B89] leading-relaxed max-w-md mx-auto">
+              This area is restricted to verified campus staff and system administrators. Your account (<span className="font-semibold text-[#202B3C]">{currentUser.email || currentUser.displayName}</span>) does not possess verified administrator credentials.
             </p>
           </div>
 
-          <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-center gap-3">
+          <div className="pt-4 border-t border-[#E8EAF0] flex flex-wrap items-center justify-center gap-3">
             <Link
               to="/browse"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-[#202B3C] bg-slate-100 hover:bg-slate-200 transition"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Return to Student Portal</span>
@@ -97,7 +97,7 @@ export function AdminRoute({ children }) {
                 await logout();
                 window.location.href = '/admin/login';
               }}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 transition shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white bg-[#4776E6] hover:bg-[#385ec7] transition shadow-sm cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
               <span>Sign In as Administrator</span>

@@ -216,15 +216,15 @@ export function ItemDetails() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowQrModal(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition shadow-xs"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-[#202B3C] bg-[#DDF4EE] border border-[#bfebe0] hover:bg-[#c8ede4] transition shadow-xs cursor-pointer"
           >
-            <QrCode className="w-3.5 h-3.5 text-emerald-700" />
+            <QrCode className="w-3.5 h-3.5 text-[#4776E6]" />
             <span>Recovery Flyer / QR</span>
           </button>
 
           <button
             onClick={handleCopyShare}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 transition shadow-xs"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-[#737B89] bg-white border border-[#E8EAF0] hover:bg-slate-50 transition shadow-xs cursor-pointer"
           >
             <Share2 className="w-3.5 h-3.5" />
             <span>{copiedLink ? 'Link Copied!' : 'Share Listing'}</span>
@@ -233,9 +233,9 @@ export function ItemDetails() {
       </div>
 
       {/* Main Details Card */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-12 gap-0">
+      <div className="clay-card bg-white rounded-3xl border border-[#E8EAF0] shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-12 gap-0">
         {/* Left Column: Image */}
-        <div className="md:col-span-5 bg-slate-950 flex flex-col justify-center relative min-h-[280px] sm:min-h-[380px]">
+        <div className="md:col-span-5 bg-slate-100 border-r border-[#E8EAF0] flex flex-col justify-center relative min-h-[280px] sm:min-h-[380px]">
           <img
             src={detailImgSrc || getItemImageUrl(item)}
             alt={item.title}
@@ -257,17 +257,17 @@ export function ItemDetails() {
           <div className="space-y-4">
             {/* Category tag */}
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
-                <Tag className="w-3 h-3 text-emerald-600" />
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-[#DDF4EE] text-[#202B3C] border border-[#bfebe0]">
+                <Tag className="w-3 h-3 text-[#4776E6]" />
                 <span>{item.category}</span>
               </span>
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-[#737B89]">
                 Reported {formatDate(item.createdAt || item.eventDate)}
               </span>
             </div>
 
             {/* Title */}
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#202B3C] tracking-tight leading-tight">
               {item.title}
             </h1>
 
@@ -280,36 +280,36 @@ export function ItemDetails() {
             )}
 
             {/* Location & Reported date details */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 py-3 border-y border-slate-100 text-xs sm:text-sm">
-              <div className="flex items-center gap-2 text-slate-600">
-                <MapPin className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 py-3 border-y border-[#E8EAF0] text-xs sm:text-sm">
+              <div className="flex items-center gap-2 text-[#737B89]">
+                <MapPin className="w-4 h-4 text-[#4776E6] flex-shrink-0" />
                 <span>
-                  <strong className="text-slate-800 font-semibold">Location:</strong>{' '}
+                  <strong className="text-[#202B3C] font-semibold">Location:</strong>{' '}
                   {formatItemLocation(item)}
                 </span>
               </div>
 
-              <div className="flex items-center gap-2 text-slate-600">
-                <Calendar className="w-4 h-4 text-slate-400 flex-shrink-0" />
+              <div className="flex items-center gap-2 text-[#737B89]">
+                <Calendar className="w-4 h-4 text-[#737B89] flex-shrink-0" />
                 <span>
-                  <strong className="text-slate-800 font-semibold">Date {item.type === 'found' ? 'Found' : 'Lost'}:</strong>{' '}
+                  <strong className="text-[#202B3C] font-semibold">Date {item.type === 'found' ? 'Found' : 'Lost'}:</strong>{' '}
                   {formatDate(item.eventDate)}
                 </span>
               </div>
 
-              <div className="flex items-center gap-2 text-slate-600">
-                <UserCheck className="w-4 h-4 text-slate-400 flex-shrink-0" />
+              <div className="flex items-center gap-2 text-[#737B89]">
+                <UserCheck className="w-4 h-4 text-[#737B89] flex-shrink-0" />
                 <span>
-                  <strong className="text-slate-800 font-semibold">Reported By:</strong>{' '}
+                  <strong className="text-[#202B3C] font-semibold">Reported By:</strong>{' '}
                   {item.ownerDisplayName || 'Campus Student'}
                 </span>
               </div>
 
-              <div className="flex items-center gap-2 text-slate-600">
-                <Clock className="w-4 h-4 text-slate-400 flex-shrink-0" />
+              <div className="flex items-center gap-2 text-[#737B89]">
+                <Clock className="w-4 h-4 text-[#737B89] flex-shrink-0" />
                 <span>
-                  <strong className="text-slate-800 font-semibold">Status:</strong>{' '}
-                  <span className="capitalize">{item.status}</span>
+                  <strong className="text-[#202B3C] font-semibold">Status:</strong>{' '}
+                  <span className="capitalize text-[#202B3C]">{item.status}</span>
                 </span>
               </div>
             </div>
@@ -317,10 +317,10 @@ export function ItemDetails() {
             {/* Distinguishing Features */}
             {item.features && (
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Features:</span>
+                <span className="text-[11px] font-bold text-[#737B89] uppercase tracking-wider">Features:</span>
                 {(Array.isArray(item.features) ? item.features : item.features.split(',')).map((f, i) => (
-                  <span key={i} className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200">
-                    <Sparkles className="w-3 h-3 text-emerald-600" />
+                  <span key={i} className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#F8F7F4] text-[#202B3C] border border-[#E8EAF0]">
+                    <Sparkles className="w-3 h-3 text-[#4776E6]" />
                     {f.trim()}
                   </span>
                 ))}
@@ -329,39 +329,39 @@ export function ItemDetails() {
 
             {/* Detailed Description */}
             <div className="space-y-2">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[#202B3C]">
                 Description &amp; Identifying Details
               </h3>
-              <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line bg-slate-50/70 p-4 rounded-2xl border border-slate-100">
+              <p className="text-sm text-[#202B3C] leading-relaxed whitespace-pre-line bg-[#F8F7F4] p-4 rounded-2xl border border-[#E8EAF0]">
                 {item.description}
               </p>
             </div>
           </div>
 
           {/* Action Zone: Owner Actions vs Claimant Actions */}
-          <div className="pt-4 border-t border-slate-100 space-y-4">
+          <div className="pt-4 border-t border-[#E8EAF0] space-y-4">
             {isOwner ? (
-              <div className="bg-emerald-50/60 border border-emerald-200/80 rounded-2xl p-4 sm:p-5 space-y-4">
+              <div className="bg-[#DDF4EE]/40 border border-[#bfebe0] rounded-2xl p-4 sm:p-5 space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <h4 className="text-sm font-bold text-emerald-950">
+                    <h4 className="text-sm font-bold text-[#202B3C]">
                       Listing Management &amp; Claims
                     </h4>
-                    <p className="text-xs text-emerald-800">
+                    <p className="text-xs text-[#737B89]">
                       You reported this listing. Manage status, review private verification answers, or coordinate handovers.
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setShowStatusModal(true)}
-                      className="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-white bg-emerald-700 hover:bg-emerald-800 shadow-sm transition"
+                      className="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-white bg-[#4776E6] hover:bg-[#385ec7] shadow-sm transition"
                     >
                       Change Status
                     </button>
                     {item.status !== 'resolved' && (
                       <button
                         onClick={() => handleStatusChange('resolved')}
-                        className="px-3 py-1.5 rounded-xl text-xs font-semibold text-emerald-900 bg-emerald-200 hover:bg-emerald-300 transition"
+                        className="px-3 py-1.5 rounded-xl text-xs font-semibold text-[#4776E6] bg-[#DDF4EE] hover:bg-[#c8ede4] transition"
                       >
                         Mark Returned
                       </button>
@@ -371,47 +371,47 @@ export function ItemDetails() {
 
                 {/* Owner Private Verification Clue Preview */}
                 {item.privateVerificationClue && (
-                  <div className="p-3 bg-white rounded-xl border border-emerald-200 text-xs space-y-1">
-                    <div className="flex items-center gap-1.5 font-bold text-emerald-900">
-                      <KeyRound className="w-3.5 h-3.5 text-emerald-700" />
+                  <div className="p-3 bg-white rounded-xl border border-[#bfebe0] text-xs space-y-1">
+                    <div className="flex items-center gap-1.5 font-bold text-[#202B3C]">
+                      <KeyRound className="w-3.5 h-3.5 text-[#4776E6]" />
                       <span>Your Private Verification Challenge:</span>
                     </div>
-                    <p className="font-mono text-slate-800 bg-slate-50 p-2 rounded-lg border border-slate-200">
+                    <p className="font-mono text-[#202B3C] bg-[#F8F7F4] p-2 rounded-lg border border-[#E8EAF0]">
                       "{item.privateVerificationClue}"
                     </p>
-                    <p className="text-[11px] text-slate-500">
+                    <p className="text-[11px] text-[#737B89]">
                       Claimants must answer this challenge. Check their responses below before accepting.
                     </p>
                   </div>
                 )}
 
                 {/* Display incoming claims for owner */}
-                <div className="pt-3 border-t border-emerald-200/60 space-y-2.5">
-                  <h5 className="text-xs font-bold uppercase tracking-wider text-emerald-950 flex items-center justify-between">
+                <div className="pt-3 border-t border-[#E8EAF0] space-y-2.5">
+                  <h5 className="text-xs font-bold uppercase tracking-wider text-[#202B3C] flex items-center justify-between">
                     <span className="flex items-center gap-1.5">
-                      <Inbox className="w-3.5 h-3.5 text-emerald-700" />
+                      <Inbox className="w-3.5 h-3.5 text-[#4776E6]" />
                       <span>Claims Received ({itemRequests.length})</span>
                     </span>
                   </h5>
 
                   {itemRequests.length === 0 ? (
-                    <p className="text-xs text-emerald-700 italic py-1">
+                    <p className="text-xs text-[#737B89] italic py-1">
                       No student recovery claims submitted yet.
                     </p>
                   ) : (
                     itemRequests.map((req) => (
                       <div
                         key={req.id}
-                        className="p-3.5 bg-white rounded-xl border border-emerald-200/90 text-xs space-y-2.5 shadow-xs"
+                        className="p-3.5 bg-white rounded-xl border border-[#E8EAF0] text-xs space-y-2.5 shadow-xs"
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-bold text-slate-900 text-sm">
+                          <span className="font-bold text-[#202B3C] text-sm">
                             {req.requesterDisplayName}
                           </span>
                           <span
                             className={`px-2.5 py-0.5 rounded-full font-semibold text-[11px] ${
                               req.status === 'accepted'
-                                ? 'bg-emerald-100 text-emerald-800'
+                                ? 'bg-[#DDF4EE] text-[#1c695b]'
                                 : req.status === 'declined'
                                 ? 'bg-rose-100 text-rose-800'
                                 : 'bg-amber-100 text-amber-800'
@@ -422,7 +422,7 @@ export function ItemDetails() {
                         </div>
 
                         {/* Claimant message */}
-                        <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100 text-slate-700">
+                        <div className="bg-[#F8F7F4] p-2.5 rounded-lg border border-[#E8EAF0] text-[#202B3C]">
                           <p className="leading-relaxed">{req.message}</p>
                         </div>
 
@@ -433,14 +433,14 @@ export function ItemDetails() {
                               <KeyRound className="w-3 h-3 text-amber-700" />
                               Claimant's Verification Answer:
                             </span>
-                            <p className="font-mono text-xs text-slate-900 font-semibold bg-white p-2 rounded border border-amber-200">
+                            <p className="font-mono text-xs text-[#202B3C] font-semibold bg-white p-2 rounded border border-amber-200">
                               {req.verificationAnswer}
                             </p>
                           </div>
                         )}
 
                         {/* Actions for this claim */}
-                        <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-100">
+                        <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-[#E8EAF0]">
                           <button
                             type="button"
                             onClick={() =>
@@ -449,7 +449,7 @@ export function ItemDetails() {
                                 otherUserDisplayName: req.requesterDisplayName
                               })
                             }
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-emerald-800 bg-emerald-50 hover:bg-emerald-100 font-semibold transition"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[#4776E6] bg-[#DDF4EE] hover:bg-[#c8ede4] font-semibold transition"
                           >
                             <MessageSquare className="w-3.5 h-3.5" />
                             <span>Chat with Claimant</span>
@@ -465,7 +465,7 @@ export function ItemDetails() {
                               </button>
                               <button
                                 onClick={() => handleRequestStatusChange(req.id, 'accepted')}
-                                className="px-3 py-1.5 rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 font-semibold shadow-xs transition"
+                                className="px-3 py-1.5 rounded-lg text-white bg-[#4776E6] hover:bg-[#385ec7] font-semibold shadow-xs transition"
                               >
                                 Accept Claim
                               </button>
@@ -480,8 +480,8 @@ export function ItemDetails() {
             ) : (
               <div className="space-y-3">
                 {item.status === 'resolved' ? (
-                  <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs sm:text-sm flex items-center gap-2.5">
-                    <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                  <div className="p-4 rounded-2xl bg-[#DDF4EE]/60 border border-[#bfebe0] text-[#202B3C] text-xs sm:text-sm flex items-center gap-2.5">
+                    <CheckCircle className="w-5 h-5 text-[#4776E6] flex-shrink-0" />
                     <span className="font-medium">
                       This item has been safely recovered and returned to its owner!
                     </span>
@@ -495,34 +495,34 @@ export function ItemDetails() {
                     <div className="flex flex-wrap items-center gap-2">
                       <Link
                         to="/login"
-                        className="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition"
+                        className="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-white bg-[#4776E6] hover:bg-[#385ec7] transition"
                       >
                         Sign In
                       </Link>
                       <Link
                         to="/register"
-                        className="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 transition"
+                        className="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-[#4776E6] bg-[#DDF4EE] hover:bg-[#c8ede4] transition"
                       >
                         Create Account
                       </Link>
                     </div>
                   </div>
                 ) : existingUserClaim ? (
-                  <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm space-y-2">
+                  <div className="p-4 rounded-2xl bg-[#DDF4EE]/40 border border-[#bfebe0] text-[#202B3C] text-xs sm:text-sm space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 font-bold">
-                        <CheckCircle className="w-4 h-4 text-emerald-600" />
+                        <CheckCircle className="w-4 h-4 text-[#4776E6]" />
                         <span>Your Recovery Claim is {existingUserClaim.status.toUpperCase()}</span>
                       </div>
-                      <span className="text-[11px] text-emerald-700 font-medium">
+                      <span className="text-[11px] text-[#737B89] font-medium">
                         Sent {formatDate(existingUserClaim.createdAt)}
                       </span>
                     </div>
-                    <p className="text-xs text-emerald-900 leading-relaxed bg-white/70 p-2.5 rounded-xl border border-emerald-200">
+                    <p className="text-xs text-[#202B3C] leading-relaxed bg-white/70 p-2.5 rounded-xl border border-[#bfebe0]">
                       "{existingUserClaim.message}"
                     </p>
                     <div className="pt-1 flex items-center justify-between">
-                      <p className="text-[11px] text-emerald-700">
+                      <p className="text-[11px] text-[#737B89]">
                         Listing owner has been notified. Coordinate a safe handover in-app:
                       </p>
                       <button
@@ -532,7 +532,7 @@ export function ItemDetails() {
                             otherUserDisplayName: item.ownerDisplayName || 'Reporter'
                           })
                         }
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-white bg-emerald-700 hover:bg-emerald-800 transition shadow-xs"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-white bg-[#4776E6] hover:bg-[#385ec7] transition shadow-xs"
                       >
                         <MessageSquare className="w-3.5 h-3.5" />
                         <span>Open Chat with Reporter</span>
@@ -540,12 +540,12 @@ export function ItemDetails() {
                     </div>
                   </div>
                 ) : claimSuccess ? (
-                  <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm space-y-2">
+                  <div className="p-4 rounded-2xl bg-[#DDF4EE]/50 border border-[#bfebe0] text-[#202B3C] text-xs sm:text-sm space-y-2">
                     <div className="flex items-center gap-2 font-semibold">
-                      <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                      <CheckCircle className="w-5 h-5 text-[#4776E6] flex-shrink-0" />
                       <span>Recovery Claim Successfully Submitted!</span>
                     </div>
-                    <p className="text-xs text-emerald-700">
+                    <p className="text-xs text-[#737B89]">
                       The listing owner has been notified and can review your verification answers.
                     </p>
                     <button
@@ -555,19 +555,19 @@ export function ItemDetails() {
                           otherUserDisplayName: item.ownerDisplayName || 'Reporter'
                         })
                       }
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-white bg-emerald-700 hover:bg-emerald-800 transition"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-white bg-[#4776E6] hover:bg-[#385ec7] transition"
                     >
                       <MessageSquare className="w-3.5 h-3.5" />
                       <span>Open Chat with Reporter</span>
                     </button>
                   </div>
                 ) : (
-                  <form onSubmit={handleClaimSubmit} className="space-y-3.5 bg-slate-50/80 p-4 sm:p-5 rounded-2xl border border-slate-200">
-                    <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
-                      <label htmlFor="recovery-msg" className="block text-xs font-bold uppercase tracking-wider text-slate-800">
+                  <form onSubmit={handleClaimSubmit} className="space-y-3.5 bg-[#F8F7F4] p-4 sm:p-5 rounded-2xl border border-[#E8EAF0]">
+                    <div className="flex items-center justify-between border-b border-[#E8EAF0] pb-2.5">
+                      <label htmlFor="recovery-msg" className="block text-xs font-bold uppercase tracking-wider text-[#202B3C]">
                         {item.type === 'found' ? 'Claim This Item (Prove Ownership)' : 'I Found Your Item (Contact Owner)'}
                       </label>
-                      <span className="text-[11px] text-slate-400 font-medium">Encrypted In-App Handshake</span>
+                      <span className="text-[11px] text-[#737B89] font-medium">Encrypted In-App Handshake</span>
                     </div>
 
                     {/* Private Verification Question Challenge */}
@@ -591,14 +591,14 @@ export function ItemDetails() {
                             value={verificationAnswer}
                             onChange={(e) => setVerificationAnswer(e.target.value)}
                             placeholder="e.g., serial number, exact lockscreen wallpaper, engraving, internal marks..."
-                            className="w-full px-3 py-2 bg-white border border-amber-300 rounded-lg text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                            className="w-full px-3 py-2 bg-white border border-amber-300 rounded-lg text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#4776E6]"
                           />
                         </div>
                       </div>
                     )}
 
                     <div className="space-y-1">
-                      <label htmlFor="recovery-msg" className="block text-xs font-semibold text-slate-700">
+                      <label htmlFor="recovery-msg" className="block text-xs font-semibold text-[#202B3C]">
                         Message &amp; Preferred Campus Handover Location:
                       </label>
                       <textarea
@@ -612,7 +612,7 @@ export function ItemDetails() {
                             ? "Provide contact note and meeting preference: e.g., 'I can meet you at the Library Helpdesk during lunch hour.'"
                             : "Provide retrieval instructions: e.g., 'I safely turned this in to the Student Union Info Desk under reference ID #42.'"
                         }
-                        className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500"
+                        className="w-full px-3.5 py-2.5 bg-white border border-[#E8EAF0] rounded-xl text-[#202B3C] text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#4776E6]/40 focus:border-[#4776E6]"
                       />
                     </div>
 
@@ -623,7 +623,7 @@ export function ItemDetails() {
                     <button
                       type="submit"
                       disabled={claimSubmitting}
-                      className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm transition disabled:opacity-50"
+                      className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold text-white bg-[#4776E6] hover:bg-[#385ec7] shadow-sm transition disabled:opacity-50"
                     >
                       {claimSubmitting ? (
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -643,15 +643,15 @@ export function ItemDetails() {
       </div>
 
       {/* Safety Protocol Banner */}
-      <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 flex items-start gap-3.5 text-xs text-slate-600">
-        <ShieldCheck className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+      <div className="clay-card bg-white border border-[#E8EAF0] rounded-2xl p-5 flex items-start gap-3.5 text-xs text-[#737B89]">
+        <ShieldCheck className="w-5 h-5 text-[#4776E6] flex-shrink-0 mt-0.5" />
         <div>
-          <strong className="text-slate-800">Campus Verification Reminder:</strong> Never pay money to claim belongings. For personal safety, meet during daylight hours at official campus hubs like the A-Block / U-Block Information Desk or Campus Library Entrance.
+          <strong className="text-[#202B3C]">Campus Verification Reminder:</strong> Never pay money to claim belongings. For personal safety, meet during daylight hours at official campus hubs like the A-Block / U-Block Information Desk or Campus Library Entrance.
         </div>
       </div>
 
       {/* Dispute or Issue Reporting */}
-      <div className="flex items-center justify-between px-2 pt-1 text-xs text-slate-500">
+      <div className="flex items-center justify-between px-2 pt-1 text-xs text-[#737B89]">
         <span>Notice an error, fake claim, or duplicate?</span>
         <button
           type="button"
@@ -665,12 +665,12 @@ export function ItemDetails() {
 
       {/* Owner Status Modal */}
       {showStatusModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full space-y-5 shadow-2xl">
-            <h3 className="text-lg font-bold text-slate-900">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="clay-card bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full space-y-5 shadow-2xl border border-[#E8EAF0]">
+            <h3 className="text-lg font-bold text-[#202B3C]">
               Update Listing Status
             </h3>
-            <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#737B89] leading-relaxed">
               Mark whether this item is currently available, pending verification, or successfully returned to its owner.
             </p>
 
@@ -678,16 +678,16 @@ export function ItemDetails() {
               <button
                 onClick={() => handleStatusChange('open')}
                 disabled={updatingStatus}
-                className="w-full text-left p-3 rounded-xl border border-slate-200 hover:bg-slate-50 flex items-center justify-between text-xs sm:text-sm font-medium"
+                className="w-full text-left p-3 rounded-xl border border-[#E8EAF0] hover:bg-[#F8F7F4] flex items-center justify-between text-xs sm:text-sm font-medium text-[#202B3C]"
               >
                 <span>Active / Open</span>
-                {item.status === 'open' && <CheckCircle className="w-4 h-4 text-emerald-600" />}
+                {item.status === 'open' && <CheckCircle className="w-4 h-4 text-[#4776E6]" />}
               </button>
 
               <button
                 onClick={() => handleStatusChange('pending')}
                 disabled={updatingStatus}
-                className="w-full text-left p-3 rounded-xl border border-slate-200 hover:bg-slate-50 flex items-center justify-between text-xs sm:text-sm font-medium"
+                className="w-full text-left p-3 rounded-xl border border-[#E8EAF0] hover:bg-[#F8F7F4] flex items-center justify-between text-xs sm:text-sm font-medium text-[#202B3C]"
               >
                 <span>Pending Claim Verification</span>
                 {item.status === 'pending' && <CheckCircle className="w-4 h-4 text-amber-500" />}
@@ -696,17 +696,17 @@ export function ItemDetails() {
               <button
                 onClick={() => handleStatusChange('resolved')}
                 disabled={updatingStatus}
-                className="w-full text-left p-3 rounded-xl border border-emerald-300 bg-emerald-50/50 hover:bg-emerald-50 flex items-center justify-between text-xs sm:text-sm font-medium text-emerald-900"
+                className="w-full text-left p-3 rounded-xl border border-[#bfebe0] bg-[#DDF4EE]/50 hover:bg-[#DDF4EE]/70 flex items-center justify-between text-xs sm:text-sm font-medium text-[#202B3C]"
               >
                 <span>Returned &amp; Recovered</span>
-                {item.status === 'resolved' && <CheckCircle className="w-4 h-4 text-emerald-600" />}
+                {item.status === 'resolved' && <CheckCircle className="w-4 h-4 text-[#4776E6]" />}
               </button>
             </div>
 
             <div className="pt-2 flex justify-end">
               <button
                 onClick={() => setShowStatusModal(false)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-[#737B89] hover:bg-slate-100"
               >
                 Close
               </button>

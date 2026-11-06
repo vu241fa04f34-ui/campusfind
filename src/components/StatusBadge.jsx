@@ -25,13 +25,13 @@ export function StatusBadge({ type, status, isDemo, isSample }) {
       <span
         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider ${
           isFound
-            ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+            ? 'bg-[#DDF4EE] text-[#1c695b] border border-[#bfebe0]'
             : 'bg-rose-100 text-rose-800 border border-rose-200'
         }`}
       >
         <span
           className={`w-1.5 h-1.5 mr-1.5 rounded-full ${
-            isFound ? 'bg-emerald-500' : 'bg-rose-500'
+            isFound ? 'bg-teal-600' : 'bg-rose-500'
           }`}
         ></span>
         {isFound ? 'Found' : 'Lost'}

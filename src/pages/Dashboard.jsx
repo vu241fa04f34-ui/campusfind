@@ -228,22 +228,22 @@ export function Dashboard() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       {/* User Header */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="clay-card bg-white rounded-3xl border border-[#E8EAF0] shadow-sm p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
           {currentUser?.photoURL ? (
             <img
               src={currentUser.photoURL}
               alt={currentUser.displayName || 'Student'}
-              className="w-16 h-16 rounded-2xl object-cover shadow-md shadow-emerald-600/30 border-2 border-emerald-500"
+              className="w-16 h-16 rounded-2xl object-cover shadow-md shadow-[#4776E6]/30 border-2 border-[#4776E6]"
             />
           ) : (
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center text-2xl font-bold shadow-md shadow-emerald-600/30">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#4776E6] to-[#385ec7] text-white flex items-center justify-center text-2xl font-bold shadow-md shadow-[#4776E6]/30">
               {currentUser?.displayName ? currentUser.displayName[0].toUpperCase() : 'S'}
             </div>
           )}
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-slate-900">
+              <h1 className="text-2xl font-bold text-[#202B3C]">
                 {currentUser?.displayName || 'Student Account'}
               </h1>
               {(currentUser?.authProvider === 'google' || currentUser?.providerData?.some(p => p.providerId === 'google.com')) && (
@@ -252,7 +252,7 @@ export function Dashboard() {
                 </span>
               )}
             </div>
-            <p className="text-xs sm:text-sm text-slate-500">
+            <p className="text-xs sm:text-sm text-[#737B89]">
               {currentUser?.email || ''}
             </p>
           </div>
@@ -260,9 +260,9 @@ export function Dashboard() {
 
         {/* Quick Stats & Action */}
         <div className="flex flex-wrap items-center gap-3">
-          <div className="px-4 py-2 rounded-xl bg-slate-50 border border-slate-100 text-center">
-            <span className="block text-xl font-bold text-slate-900">{items.length}</span>
-            <span className="text-[11px] font-medium text-slate-500">Total Reports</span>
+          <div className="px-4 py-2 rounded-xl bg-[#F8F7F4] border border-[#E8EAF0] text-center">
+            <span className="block text-xl font-bold text-[#202B3C]">{items.length}</span>
+            <span className="text-[11px] font-medium text-[#737B89]">Total Reports</span>
           </div>
 
           <div className="px-4 py-2 rounded-xl bg-amber-50 border border-amber-100 text-center">
@@ -270,14 +270,14 @@ export function Dashboard() {
             <span className="text-[11px] font-medium text-amber-600">Active</span>
           </div>
 
-          <div className="px-4 py-2 rounded-xl bg-emerald-50 border border-emerald-100 text-center">
-            <span className="block text-xl font-bold text-emerald-700">{resolvedCount}</span>
-            <span className="text-[11px] font-medium text-emerald-600">Reunited</span>
+          <div className="px-4 py-2 rounded-xl bg-[#DDF4EE] border border-[#bfebe0] text-center">
+            <span className="block text-xl font-bold text-[#202B3C]">{resolvedCount}</span>
+            <span className="text-[11px] font-medium text-[#202B3C]">Reunited</span>
           </div>
 
           <Link
             to="/report"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm shadow-emerald-600/30 transition"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#4776E6] hover:bg-[#385ec7] shadow-sm shadow-[#4776E6]/30 transition cursor-pointer"
           >
             <PlusCircle className="w-4 h-4" />
             <span>New Report</span>
@@ -286,32 +286,32 @@ export function Dashboard() {
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-slate-200 flex gap-4">
+      <div className="border-b border-[#E8EAF0] flex gap-4">
         <button
           onClick={() => setActiveTab('my-items')}
-          className={`pb-3 text-sm font-semibold transition flex items-center gap-2 border-b-2 ${
+          className={`pb-3 text-sm font-semibold transition flex items-center gap-2 border-b-2 cursor-pointer ${
             activeTab === 'my-items'
-              ? 'border-emerald-600 text-emerald-700'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              ? 'border-[#4776E6] text-[#4776E6] font-bold'
+              : 'border-transparent text-[#737B89] hover:text-[#202B3C]'
           }`}
         >
           <span>My Reported Items</span>
-          <span className="px-2 py-0.5 rounded-full text-xs bg-slate-100 text-slate-600">
+          <span className="px-2 py-0.5 rounded-full text-xs bg-slate-100 text-[#737B89]">
             {items.length}
           </span>
         </button>
 
         <button
           onClick={() => setActiveTab('requests')}
-          className={`pb-3 text-sm font-semibold transition flex items-center gap-2 border-b-2 ${
+          className={`pb-3 text-sm font-semibold transition flex items-center gap-2 border-b-2 cursor-pointer ${
             activeTab === 'requests'
-              ? 'border-emerald-600 text-emerald-700'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              ? 'border-[#4776E6] text-[#4776E6] font-bold'
+              : 'border-transparent text-[#737B89] hover:text-[#202B3C]'
           }`}
         >
           <Inbox className="w-4 h-4" />
           <span>Recovery Claims &amp; Messages</span>
-          <span className="px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700">
+          <span className="px-2 py-0.5 rounded-full text-xs bg-[#DDF4EE] text-[#202B3C] font-bold">
             {requests.length}
           </span>
         </button>

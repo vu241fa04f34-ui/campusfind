@@ -405,25 +405,25 @@ export function AdminDashboard() {
   });
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-[#F8F7F4] flex flex-col md:flex-row">
       {/* Sidebar Navigation */}
-      <aside className="w-full md:w-64 bg-slate-900 text-white shrink-0 flex flex-col border-r border-slate-800">
-        <div className="p-5 border-b border-slate-800 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-slate-800 text-emerald-400 flex items-center justify-center border border-slate-700 shadow-inner">
+      <aside className="w-full md:w-64 bg-white text-[#202B3C] shrink-0 flex flex-col border-r border-[#E8EAF0]">
+        <div className="p-5 border-b border-[#E8EAF0] flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-[#4776E6]/10 text-[#4776E6] flex items-center justify-center border border-[#4776E6]/20 shadow-xs">
             <ShieldCheck className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-sm font-extrabold tracking-tight text-white">CampusFind Admin</h2>
-            <p className="text-[10px] text-slate-400 font-medium">Root Authority Console</p>
+            <h2 className="text-sm font-extrabold tracking-tight text-[#202B3C]">CampusFind Admin</h2>
+            <p className="text-[10px] text-[#737B89] font-medium">Root Authority Console</p>
           </div>
         </div>
 
         {/* Admin Card */}
-        <div className="p-4 mx-3 my-3 rounded-2xl bg-slate-800/60 border border-slate-700/70 text-xs space-y-1">
-          <p className="font-bold text-white truncate">{currentUser?.displayName || 'System Administrator'}</p>
-          <p className="text-[11px] text-slate-400 truncate">{currentUser?.email}</p>
+        <div className="p-4 mx-3 my-3 rounded-2xl bg-[#F8F7F4] border border-[#E8EAF0] text-xs space-y-1">
+          <p className="font-bold text-[#202B3C] truncate">{currentUser?.displayName || 'System Administrator'}</p>
+          <p className="text-[11px] text-[#737B89] truncate">{currentUser?.email}</p>
           <div className="pt-1">
-            <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-950 text-emerald-400 border border-emerald-800/60">
+            <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#DDF4EE] text-[#202B3C] border border-[#bfebe0]">
               Full Administrator
             </span>
           </div>
@@ -435,8 +435,8 @@ export function AdminDashboard() {
             onClick={() => setActiveTab('overview')}
             className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition ${
               activeTab === 'overview'
-                ? 'bg-emerald-600 text-white shadow-sm'
-                : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                ? 'bg-[#4776E6] text-white shadow-sm'
+                : 'text-[#737B89] hover:bg-slate-100 hover:text-[#202B3C]'
             }`}
           >
             <Package className="w-4 h-4" />
@@ -450,15 +450,15 @@ export function AdminDashboard() {
             }}
             className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition ${
               activeTab === 'users'
-                ? 'bg-emerald-600 text-white shadow-sm'
-                : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                ? 'bg-[#4776E6] text-white shadow-sm'
+                : 'text-[#737B89] hover:bg-slate-100 hover:text-[#202B3C]'
             }`}
           >
             <div className="flex items-center gap-2.5">
               <UserRound className="w-4 h-4" />
               <span>Students Logins</span>
             </div>
-            <span className="text-[10px] bg-slate-800 px-2 py-0.5 rounded-full text-slate-400">
+            <span className={`text-[10px] px-2 py-0.5 rounded-full ${activeTab === 'users' ? 'bg-white/20 text-white' : 'bg-slate-100 text-[#737B89]'}`}>
               {totalUsersCount}
             </span>
           </button>
@@ -467,15 +467,15 @@ export function AdminDashboard() {
             onClick={() => setActiveTab('items')}
             className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition ${
               activeTab === 'items'
-                ? 'bg-emerald-600 text-white shadow-sm'
-                : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                ? 'bg-[#4776E6] text-white shadow-sm'
+                : 'text-[#737B89] hover:bg-slate-100 hover:text-[#202B3C]'
             }`}
           >
             <div className="flex items-center gap-2.5">
               <FileText className="w-4 h-4" />
               <span>Manage All Items</span>
             </div>
-            <span className="text-[10px] bg-slate-800 px-2 py-0.5 rounded-full text-slate-400">
+            <span className={`text-[10px] px-2 py-0.5 rounded-full ${activeTab === 'items' ? 'bg-white/20 text-white' : 'bg-slate-100 text-[#737B89]'}`}>
               {totalItemsCount}
             </span>
           </button>
@@ -484,8 +484,8 @@ export function AdminDashboard() {
             onClick={() => setActiveTab('complaints')}
             className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition ${
               activeTab === 'complaints'
-                ? 'bg-emerald-600 text-white shadow-sm'
-                : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                ? 'bg-[#4776E6] text-white shadow-sm'
+                : 'text-[#737B89] hover:bg-slate-100 hover:text-[#202B3C]'
             }`}
           >
             <div className="flex items-center gap-2.5">
@@ -503,15 +503,15 @@ export function AdminDashboard() {
             onClick={() => setActiveTab('authorities')}
             className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition ${
               activeTab === 'authorities'
-                ? 'bg-emerald-600 text-white shadow-sm'
-                : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                ? 'bg-[#4776E6] text-white shadow-sm'
+                : 'text-[#737B89] hover:bg-slate-100 hover:text-[#202B3C]'
             }`}
           >
             <div className="flex items-center gap-2.5">
               <Shield className="w-4 h-4" />
               <span>Staff Authorities</span>
             </div>
-            <span className="text-[10px] bg-slate-800 px-2 py-0.5 rounded-full text-indigo-300">
+            <span className={`text-[10px] px-2 py-0.5 rounded-full ${activeTab === 'authorities' ? 'bg-white/20 text-white' : 'bg-slate-100 text-[#737B89]'}`}>
               {staffAuthoritiesCount}
             </span>
           </button>
@@ -520,8 +520,8 @@ export function AdminDashboard() {
             onClick={() => setActiveTab('audit')}
             className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition ${
               activeTab === 'audit'
-                ? 'bg-emerald-600 text-white shadow-sm'
-                : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                ? 'bg-[#4776E6] text-white shadow-sm'
+                : 'text-[#737B89] hover:bg-slate-100 hover:text-[#202B3C]'
             }`}
           >
             <Clock className="w-4 h-4" />
@@ -532,8 +532,8 @@ export function AdminDashboard() {
             onClick={() => setActiveTab('settings')}
             className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition ${
               activeTab === 'settings'
-                ? 'bg-emerald-600 text-white shadow-sm'
-                : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                ? 'bg-[#4776E6] text-white shadow-sm'
+                : 'text-[#737B89] hover:bg-slate-100 hover:text-[#202B3C]'
             }`}
           >
             <SlidersHorizontal className="w-4 h-4" />
@@ -542,10 +542,10 @@ export function AdminDashboard() {
         </nav>
 
         {/* Footer Logout */}
-        <div className="p-3 border-t border-slate-800">
+        <div className="p-3 border-t border-[#E8EAF0]">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-rose-300 hover:bg-rose-950/40 hover:text-rose-200 transition text-xs font-semibold cursor-pointer"
+            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-rose-600 hover:bg-rose-50 transition text-xs font-semibold cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
             <span>Sign Out</span>

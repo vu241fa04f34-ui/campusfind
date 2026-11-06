@@ -15,24 +15,24 @@ export function ReportItem() {
       <div className="mb-6">
         <button
           onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-slate-500 hover:text-slate-800 transition"
+          className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#737B89] hover:text-[#202B3C] transition cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back</span>
         </button>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xl p-6 sm:p-10">
-        <div className="border-b border-slate-100 pb-6 mb-8">
+      <div className="clay-card bg-white rounded-3xl border border-[#E8EAF0] shadow-xl p-6 sm:p-10">
+        <div className="border-b border-[#E8EAF0] pb-6 mb-8">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
-              <PlusCircle className="w-6 h-6 text-emerald-600" />
+            <div className="w-10 h-10 rounded-xl bg-[#4776E6]/10 text-[#4776E6] flex items-center justify-center font-bold">
+              <PlusCircle className="w-6 h-6 text-[#4776E6]" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+              <h1 className="text-2xl font-bold tracking-tight text-[#202B3C]">
                 Report Campus Belonging
               </h1>
-              <p className="text-xs sm:text-sm text-slate-500">
+              <p className="text-xs sm:text-sm text-[#737B89]">
                 Help our campus community reconnect lost items with their rightful owners
               </p>
             </div>
@@ -54,13 +54,13 @@ export function ReportItem() {
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <Link
                 to="/login"
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition"
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-[#4776E6] hover:bg-[#385ec7] transition"
               >
                 Sign In
               </Link>
               <Link
                 to="/register"
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 transition"
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-[#202B3C] bg-[#DDF4EE] hover:bg-[#c8ede4] border border-[#bfebe0] transition"
               >
                 Create Account
               </Link>
@@ -76,3 +76,5 @@ export function ReportItem() {
     </div>
   );
 }
+
+export default ReportItem;

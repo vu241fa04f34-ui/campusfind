@@ -60,13 +60,13 @@ export function AdminLogin() {
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-[85vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 bg-[#F8F7F4]">
       <div className="max-w-md w-full space-y-8">
         {/* Top Back Link */}
         <div>
           <Link
             to="/login"
-            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-500 hover:text-slate-800 transition"
+            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#737B89] hover:text-[#202B3C] transition"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Return to Student Sign In</span>
@@ -74,19 +74,19 @@ export function AdminLogin() {
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-3xl border border-slate-200/90 shadow-2xl p-6 sm:p-10 space-y-6">
+        <div className="clay-card bg-white rounded-3xl border border-[#E8EAF0] shadow-xl p-6 sm:p-10 space-y-6">
           {/* Header */}
           <div className="text-center space-y-2">
-            <div className="w-14 h-14 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto text-emerald-400 shadow-lg">
-              <ShieldCheck className="w-7 h-7" />
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#4776E6] to-[#385ec7] flex items-center justify-center mx-auto text-white shadow-lg shadow-[#4776E6]/30">
+              <ShieldCheck className="w-7 h-7 text-white" />
             </div>
-            <div className="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-700">
+            <div className="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#DDF4EE] text-[#202B3C] border border-[#bfebe0]">
               Campus Security &amp; Records
             </div>
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-2xl font-black text-[#202B3C] tracking-tight">
               Administrator Portal
             </h1>
-            <p className="text-xs text-slate-500 max-w-xs mx-auto">
+            <p className="text-xs text-[#737B89] max-w-xs mx-auto">
               Authorized university administrative staff login. Access requires verified administrative privileges.
             </p>
           </div>
@@ -108,11 +108,11 @@ export function AdminLogin() {
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="admin-email" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+              <label htmlFor="admin-email" className="block text-xs font-bold uppercase tracking-wider text-[#202B3C] mb-1.5">
                 Staff / Admin Email
               </label>
               <div className="relative">
-                <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                <Mail className="w-4 h-4 text-[#737B89] absolute left-3.5 top-3.5" />
                 <input
                   id="admin-email"
                   type="email"
@@ -121,17 +121,17 @@ export function AdminLogin() {
                   placeholder="admin@vignan.ac.in"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition"
+                  className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#E8EAF0] rounded-xl text-xs sm:text-sm text-[#202B3C] placeholder-[#737B89] focus:outline-none focus:ring-2 focus:ring-[#4776E6]/40 focus:border-[#4776E6] transition"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="admin-password" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+              <label htmlFor="admin-password" className="block text-xs font-bold uppercase tracking-wider text-[#202B3C] mb-1.5">
                 Password
               </label>
               <div className="relative">
-                <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                <Lock className="w-4 h-4 text-[#737B89] absolute left-3.5 top-3.5" />
                 <input
                   id="admin-password"
                   type={showPassword ? 'text' : 'password'}
@@ -140,12 +140,12 @@ export function AdminLogin() {
                   placeholder="••••••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition"
+                  className="w-full pl-10 pr-10 py-2.5 bg-white border border-[#E8EAF0] rounded-xl text-xs sm:text-sm text-[#202B3C] placeholder-[#737B89] focus:outline-none focus:ring-2 focus:ring-[#4776E6]/40 focus:border-[#4776E6] transition"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 transition"
+                  className="absolute right-3 top-3 text-[#737B89] hover:text-[#202B3C] transition cursor-pointer"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -156,7 +156,7 @@ export function AdminLogin() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 rounded-xl text-xs sm:text-sm font-bold text-white bg-slate-900 hover:bg-slate-800 active:bg-slate-950 transition shadow-lg shadow-slate-900/20 disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full py-3 px-4 rounded-xl text-xs sm:text-sm font-bold text-white bg-[#4776E6] hover:bg-[#385ec7] active:bg-[#2b47a8] transition shadow-lg shadow-[#4776E6]/25 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
             >
               {loading ? (
                 <>
@@ -165,7 +165,7 @@ export function AdminLogin() {
                 </>
               ) : (
                 <>
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <ShieldCheck className="w-4 h-4 text-white" />
                   <span>Sign In to Admin Console</span>
                 </>
               )}
@@ -173,7 +173,7 @@ export function AdminLogin() {
           </form>
 
           {/* Footer note */}
-          <div className="pt-4 border-t border-slate-100 text-center text-[11px] text-slate-400 leading-relaxed">
+          <div className="pt-4 border-t border-[#E8EAF0] text-center text-[11px] text-[#737B89] leading-relaxed">
             CampusFind security enforcement. All administrative sessions are cryptographically logged and audited.
           </div>
         </div>

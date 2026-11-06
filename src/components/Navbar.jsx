@@ -62,23 +62,23 @@ export function Navbar() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm transition-all">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#E8EAF0] shadow-xs transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Brand Logo & Tagline */}
           <Link
             to="/"
             onClick={closeMenu}
-            className="flex items-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-emerald-500 rounded-lg p-1"
+            className="flex items-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-[#4776E6] rounded-lg p-1"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-700 to-emerald-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform duration-200">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#4776E6] to-[#385ec7] flex items-center justify-center text-white shadow-md shadow-[#4776E6]/25 group-hover:scale-105 transition-transform duration-200">
               <Compass className="w-6 h-6 text-white" />
             </div>
             <div>
-              <span className="text-xl font-bold tracking-tight text-slate-900 group-hover:text-emerald-700 transition">
-                Campus<span className="text-emerald-600">Find</span>
+              <span className="text-xl font-bold tracking-tight text-[#202B3C] group-hover:text-[#4776E6] transition">
+                Campus<span className="text-[#4776E6]">Find</span>
               </span>
-              <p className="text-[10px] tracking-wide text-slate-500 font-medium hidden sm:block -mt-1">
+              <p className="text-[10px] tracking-wide text-[#737B89] font-medium hidden sm:block -mt-1">
                 Lost something? Let's find it.
               </p>
             </div>
@@ -88,10 +88,10 @@ export function Navbar() {
           <nav className="hidden md:flex items-center gap-1 lg:gap-2">
             <Link
               to={currentUser ? "/" : "/browse"}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
+              className={`px-3 py-2 rounded-xl text-sm font-semibold transition ${
                 (isActive('/') && currentUser) || isActive('/browse')
-                  ? 'text-emerald-700 bg-emerald-50/80 font-semibold'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  ? 'text-[#4776E6] bg-[#4776E6]/10'
+                  : 'text-[#737B89] hover:text-[#202B3C] hover:bg-slate-100'
               }`}
             >
               Browse Items
@@ -99,33 +99,33 @@ export function Navbar() {
 
             <Link
               to="/campus-map"
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1.5 ${
+              className={`px-3 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-1.5 ${
                 isActive('/campus-map')
-                  ? 'text-emerald-700 bg-emerald-50/80 font-semibold'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  ? 'text-[#4776E6] bg-[#4776E6]/10'
+                  : 'text-[#737B89] hover:text-[#202B3C] hover:bg-slate-100'
               }`}
             >
-              <MapPin className="w-4 h-4 text-emerald-600" />
+              <MapPin className="w-4 h-4 text-[#4776E6]" />
               <span>Campus Map</span>
             </Link>
 
             {currentUser && (
               <Link
                 to="/matches"
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1.5 ${
+                className={`px-3 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-1.5 ${
                   isActive('/matches')
-                    ? 'text-emerald-700 bg-emerald-50/80 font-semibold'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    ? 'text-[#4776E6] bg-[#4776E6]/10'
+                    : 'text-[#737B89] hover:text-[#202B3C] hover:bg-slate-100'
                 }`}
               >
-                <Sparkles className="w-4 h-4 text-emerald-600" />
+                <Sparkles className="w-4 h-4 text-[#4776E6]" />
                 <span>Matches</span>
               </Link>
             )}
 
             <a
               href="#how-it-works"
-              className="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition"
+              className="px-3 py-2 rounded-xl text-sm font-semibold text-[#737B89] hover:text-[#202B3C] hover:bg-slate-100 transition"
             >
               How It Works
             </a>
@@ -137,7 +137,7 @@ export function Navbar() {
 
             <Link
               to="/report"
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 shadow-sm shadow-emerald-600/30 hover:shadow-md transition-all duration-200"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white bg-[#4776E6] hover:bg-[#385ec7] active:bg-[#2b47a8] shadow-sm shadow-[#4776E6]/30 hover:shadow-md transition-all duration-200"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Report Item</span>
@@ -147,58 +147,58 @@ export function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 transition focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-[#E8EAF0] bg-white hover:bg-slate-50 text-[#202B3C] transition focus:outline-none focus:ring-2 focus:ring-[#4776E6] cursor-pointer shadow-2xs"
                 >
                   {currentUser.photoURL ? (
                     <img
                       src={currentUser.photoURL}
                       alt={currentUser.displayName || 'User'}
-                      className="w-7 h-7 rounded-full object-cover border border-emerald-300"
+                      className="w-7 h-7 rounded-full object-cover border border-[#4776E6]"
                     />
                   ) : (
-                    <div className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">
+                    <div className="w-7 h-7 rounded-full bg-[#4776E6] text-white flex items-center justify-center text-xs font-bold">
                       {currentUser.displayName ? currentUser.displayName[0].toUpperCase() : 'U'}
                     </div>
                   )}
-                  <span className="text-sm font-medium max-w-[120px] truncate">
+                  <span className="text-sm font-semibold max-w-[120px] truncate text-[#202B3C]">
                     {currentUser.displayName || 'My Account'}
                   </span>
                 </button>
 
                 {userDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                    <div className="px-4 py-2 border-b border-slate-100">
-                      <p className="text-xs text-slate-500">Signed in as</p>
-                      <p className="text-sm font-semibold text-slate-800 truncate">
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-[#E8EAF0] py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div className="px-4 py-2 border-b border-[#E8EAF0]">
+                      <p className="text-[11px] text-[#737B89]">Signed in as</p>
+                      <p className="text-sm font-bold text-[#202B3C] truncate">
                         {currentUser.displayName || currentUser.email}
                       </p>
-                      <p className="text-xs text-slate-400 truncate">{currentUser.email}</p>
+                      <p className="text-xs text-[#737B89] truncate">{currentUser.email}</p>
                     </div>
 
                     <Link
                       to="/profile"
                       onClick={() => setUserDropdownOpen(false)}
-                      className="flex items-center gap-2.5 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-emerald-700"
+                      className="flex items-center gap-2.5 px-4 py-2 text-sm font-medium text-[#202B3C] hover:bg-slate-50 hover:text-[#4776E6]"
                     >
-                      <User className="w-4 h-4 text-emerald-600" />
+                      <User className="w-4 h-4 text-[#4776E6]" />
                       <span>Student Profile</span>
                     </Link>
 
                     <Link
                       to="/dashboard"
                       onClick={() => setUserDropdownOpen(false)}
-                      className="flex items-center gap-2.5 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-emerald-700"
+                      className="flex items-center gap-2.5 px-4 py-2 text-sm font-medium text-[#202B3C] hover:bg-slate-50 hover:text-[#4776E6]"
                     >
-                      <LayoutDashboard className="w-4 h-4 text-emerald-600" />
+                      <LayoutDashboard className="w-4 h-4 text-[#4776E6]" />
                       <span>My Dashboard</span>
                     </Link>
 
                     <Link
                       to="/matches"
                       onClick={() => setUserDropdownOpen(false)}
-                      className="flex items-center gap-2.5 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-emerald-700"
+                      className="flex items-center gap-2.5 px-4 py-2 text-sm font-medium text-[#202B3C] hover:bg-slate-50 hover:text-[#4776E6]"
                     >
-                      <Sparkles className="w-4 h-4 text-emerald-600" />
+                      <Sparkles className="w-4 h-4 text-[#4776E6]" />
                       <span>Item Matches</span>
                     </Link>
 
@@ -206,9 +206,9 @@ export function Navbar() {
                       <Link
                         to="/admin/dashboard"
                         onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2 text-sm text-purple-700 hover:bg-purple-50 font-semibold"
+                        className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#4776E6] hover:bg-blue-50 font-semibold"
                       >
-                        <Shield className="w-4 h-4 text-purple-600" />
+                        <Shield className="w-4 h-4 text-[#4776E6]" />
                         <span>Admin Dashboard</span>
                       </Link>
                     )}
@@ -217,18 +217,18 @@ export function Navbar() {
                       <Link
                         to="/authority/dashboard"
                         onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2 text-sm text-indigo-700 hover:bg-indigo-50 font-semibold"
+                        className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#4776E6] hover:bg-blue-50 font-semibold"
                       >
-                        <Shield className="w-4 h-4 text-indigo-600" />
+                        <Shield className="w-4 h-4 text-[#4776E6]" />
                         <span>Staff Dashboard</span>
                       </Link>
                     )}
 
-                    <div className="border-t border-slate-100 my-1"></div>
+                    <div className="border-t border-[#E8EAF0] my-1"></div>
 
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 transition text-left"
+                      className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 transition text-left cursor-pointer"
                     >
                       <LogOut className="w-4 h-4" />
                       <span>Sign Out</span>
@@ -240,13 +240,13 @@ export function Navbar() {
               <div className="flex items-center gap-2">
                 <Link
                   to="/login"
-                  className="px-3 py-2 rounded-xl text-sm font-medium text-slate-700 hover:text-emerald-700 hover:bg-slate-100 transition"
+                  className="px-3.5 py-2 rounded-xl text-sm font-semibold text-[#202B3C] hover:text-[#4776E6] hover:bg-slate-100 transition"
                 >
                   Log In
                 </Link>
                 <Link
                   to="/register"
-                  className="px-3.5 py-2 rounded-xl text-sm font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition"
+                  className="px-4 py-2 rounded-xl text-sm font-bold text-[#202B3C] bg-[#DDF4EE] border border-[#bfebe0] hover:bg-[#c8ede4] transition shadow-2xs"
                 >
                   Register
                 </Link>
@@ -259,7 +259,7 @@ export function Navbar() {
             {currentUser && <NotificationCenter />}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 focus:outline-none"
+              className="p-2 rounded-xl text-[#202B3C] hover:bg-slate-100 focus:outline-none"
               aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -270,12 +270,12 @@ export function Navbar() {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-6 space-y-3 shadow-lg">
+        <div className="md:hidden bg-white border-b border-[#E8EAF0] px-4 pt-2 pb-6 space-y-3 shadow-lg">
           <div className="space-y-1">
             <Link
               to={currentUser ? "/" : "/browse"}
               onClick={closeMenu}
-              className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50"
+              className="block px-3 py-2 rounded-xl text-base font-semibold text-[#202B3C] hover:bg-slate-50"
             >
               Browse All Items
             </Link>
@@ -283,9 +283,9 @@ export function Navbar() {
             <Link
               to="/campus-map"
               onClick={closeMenu}
-              className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2"
+              className="block px-3 py-2 rounded-xl text-base font-semibold text-[#202B3C] hover:bg-slate-50 flex items-center gap-2"
             >
-              <MapPin className="w-4 h-4 text-emerald-600" />
+              <MapPin className="w-4 h-4 text-[#4776E6]" />
               <span>Campus Map</span>
             </Link>
 
@@ -293,9 +293,9 @@ export function Navbar() {
               <Link
                 to="/matches"
                 onClick={closeMenu}
-                className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2"
+                className="block px-3 py-2 rounded-xl text-base font-semibold text-[#202B3C] hover:bg-slate-50 flex items-center gap-2"
               >
-                <Sparkles className="w-4 h-4 text-emerald-600" />
+                <Sparkles className="w-4 h-4 text-[#4776E6]" />
                 <span>Item Matches</span>
               </Link>
             )}
@@ -303,17 +303,17 @@ export function Navbar() {
             <a
               href="#how-it-works"
               onClick={closeMenu}
-              className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50"
+              className="block px-3 py-2 rounded-xl text-base font-semibold text-[#737B89] hover:bg-slate-50"
             >
               How It Works
             </a>
           </div>
 
-          <div className="pt-3 border-t border-slate-100 space-y-2">
+          <div className="pt-3 border-t border-[#E8EAF0] space-y-2">
             <Link
               to="/report"
               onClick={closeMenu}
-              className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-center text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700"
+              className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-center text-sm font-bold text-white bg-[#4776E6] hover:bg-[#385ec7]"
             >
               <PlusCircle className="w-4 h-4" />
               Report Lost or Found Item
@@ -324,18 +324,18 @@ export function Navbar() {
                 <Link
                   to="/profile"
                   onClick={closeMenu}
-                  className="flex items-center gap-2 px-3 py-2 text-base font-medium text-slate-700 hover:bg-slate-50 rounded-lg"
+                  className="flex items-center gap-2 px-3 py-2 text-base font-semibold text-[#202B3C] hover:bg-slate-50 rounded-xl"
                 >
-                  <User className="w-5 h-5 text-emerald-600" />
+                  <User className="w-5 h-5 text-[#4776E6]" />
                   Student Profile
                 </Link>
 
                 <Link
                   to="/dashboard"
                   onClick={closeMenu}
-                  className="flex items-center gap-2 px-3 py-2 text-base font-medium text-slate-700 hover:bg-slate-50 rounded-lg"
+                  className="flex items-center gap-2 px-3 py-2 text-base font-semibold text-[#202B3C] hover:bg-slate-50 rounded-xl"
                 >
-                  <LayoutDashboard className="w-5 h-5 text-emerald-600" />
+                  <LayoutDashboard className="w-5 h-5 text-[#4776E6]" />
                   My Dashboard
                 </Link>
 
@@ -343,9 +343,9 @@ export function Navbar() {
                   <Link
                     to="/admin/dashboard"
                     onClick={closeMenu}
-                    className="flex items-center gap-2 px-3 py-2 text-base font-medium text-purple-700 hover:bg-purple-50 rounded-lg"
+                    className="flex items-center gap-2 px-3 py-2 text-base font-semibold text-[#4776E6] hover:bg-blue-50 rounded-xl"
                   >
-                    <Shield className="w-5 h-5 text-purple-600" />
+                    <Shield className="w-5 h-5 text-[#4776E6]" />
                     Admin Dashboard
                   </Link>
                 )}
@@ -354,16 +354,16 @@ export function Navbar() {
                   <Link
                     to="/authority/dashboard"
                     onClick={closeMenu}
-                    className="flex items-center gap-2 px-3 py-2 text-base font-medium text-indigo-700 hover:bg-indigo-50 rounded-lg"
+                    className="flex items-center gap-2 px-3 py-2 text-base font-semibold text-[#4776E6] hover:bg-blue-50 rounded-xl"
                   >
-                    <Shield className="w-5 h-5 text-indigo-600" />
+                    <Shield className="w-5 h-5 text-[#4776E6]" />
                     Staff Dashboard
                   </Link>
                 )}
 
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 w-full text-left px-3 py-2 text-base font-medium text-rose-600 hover:bg-rose-50 rounded-lg"
+                  className="flex items-center gap-2 w-full text-left px-3 py-2 text-base font-semibold text-rose-600 hover:bg-rose-50 rounded-xl"
                 >
                   <LogOut className="w-5 h-5" />
                   Sign Out
@@ -374,14 +374,14 @@ export function Navbar() {
                 <Link
                   to="/login"
                   onClick={closeMenu}
-                  className="py-2.5 px-4 text-center rounded-xl text-sm font-medium text-slate-700 border border-slate-200 hover:bg-slate-50"
+                  className="py-2.5 px-4 text-center rounded-xl text-sm font-semibold text-[#202B3C] border border-[#E8EAF0] hover:bg-slate-50"
                 >
                   Log In
                 </Link>
                 <Link
                   to="/register"
                   onClick={closeMenu}
-                  className="py-2.5 px-4 text-center rounded-xl text-sm font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100"
+                  className="py-2.5 px-4 text-center rounded-xl text-sm font-semibold text-[#202B3C] bg-[#DDF4EE] border border-[#bfebe0] hover:bg-[#c8ede4]"
                 >
                   Register
                 </Link>

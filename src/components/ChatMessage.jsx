@@ -36,8 +36,8 @@ export function ChatMessage({ message, onQuickReply, onNavigate }) {
               key={`c-${cIdx}`}
               className={`px-1.5 py-0.5 rounded text-xs font-mono font-medium ${
                 isUserMsg
-                  ? 'bg-emerald-700/80 text-white'
-                  : 'bg-slate-100 text-emerald-800 border border-slate-200/60'
+                  ? 'bg-blue-700/80 text-white'
+                  : 'bg-[#DDF4EE] text-[#202B3C] border border-[#bfebe0]'
               }`}
             >
               {cToken.slice(1, -1)}
@@ -75,8 +75,8 @@ export function ChatMessage({ message, onQuickReply, onNavigate }) {
             onClick={onNavigate}
             className={`font-bold underline inline-flex items-center gap-0.5 ${
               isUser
-                ? 'text-white hover:text-emerald-100'
-                : 'text-emerald-700 hover:text-emerald-800'
+                ? 'text-white hover:text-blue-100'
+                : 'text-[#4776E6] hover:text-[#385ec7]'
             }`}
           >
             <span>{label}</span>
@@ -112,8 +112,8 @@ export function ChatMessage({ message, onQuickReply, onNavigate }) {
             <span
               className={`font-bold text-[11px] px-1.5 py-0.5 rounded-full flex-shrink-0 mt-0.5 ${
                 isUser
-                  ? 'bg-emerald-700 text-white'
-                  : 'bg-emerald-100 text-emerald-800'
+                  ? 'bg-blue-700 text-white'
+                  : 'bg-[#DDF4EE] text-[#4776E6]'
               }`}
             >
               {numberMatch[1]}
@@ -141,7 +141,7 @@ export function ChatMessage({ message, onQuickReply, onNavigate }) {
     <div className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'} animate-in fade-in duration-200`}>
       {/* Bot Avatar */}
       {!isUser && (
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-700 to-emerald-500 text-white flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5">
+        <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#4776E6] to-[#688ff0] text-white flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5">
           <Compass className="w-4 h-4" />
         </div>
       )}
@@ -151,8 +151,8 @@ export function ChatMessage({ message, onQuickReply, onNavigate }) {
         <div
           className={`p-3.5 rounded-2xl shadow-xs ${
             isUser
-              ? 'bg-emerald-600 text-white rounded-tr-none'
-              : 'bg-white border border-slate-200/80 text-slate-800 rounded-tl-none'
+              ? 'bg-[#4776E6] text-white rounded-tr-none'
+              : 'clay-card bg-white border border-[#E8EAF0] text-[#202B3C] rounded-tl-none'
           }`}
         >
           <div className="space-y-1">
@@ -161,7 +161,7 @@ export function ChatMessage({ message, onQuickReply, onNavigate }) {
 
           <div
             className={`text-[10px] mt-1.5 flex items-center ${
-              isUser ? 'text-emerald-100 justify-end' : 'text-slate-400 justify-start'
+              isUser ? 'text-blue-100 justify-end' : 'text-[#737B89] justify-start'
             }`}
           >
             <span>{message.time || 'Just now'}</span>
@@ -171,14 +171,14 @@ export function ChatMessage({ message, onQuickReply, onNavigate }) {
         {/* Matched Items Grid / Cards */}
         {!isUser && message.matchedItems && message.matchedItems.length > 0 && (
           <div className="space-y-2 pt-1">
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+            <span className="text-[11px] font-bold text-[#737B89] uppercase tracking-wider block">
               Possible Matches ({message.matchedItems.length}):
             </span>
             <div className="space-y-2">
               {message.matchedItems.map((item) => (
                 <div
                   key={item.id}
-                  className="bg-white rounded-xl border border-slate-200 p-2.5 sm:p-3 shadow-xs hover:border-emerald-400 hover:shadow-md transition flex gap-3 items-center"
+                  className="clay-card bg-white rounded-xl border border-[#E8EAF0] p-2.5 sm:p-3 shadow-xs hover:border-[#4776E6] hover:shadow-md transition flex gap-3 items-center"
                 >
                   <img
                     src={getItemImageUrl(item)}
@@ -191,24 +191,24 @@ export function ChatMessage({ message, onQuickReply, onNavigate }) {
                   <div className="flex-1 min-w-0 space-y-1">
                     <div className="flex items-center justify-between gap-1">
                       <StatusBadge type={item.type} status={item.status} isDemo={item.isDemo} />
-                      <span className="text-[10px] text-slate-400 flex items-center gap-0.5">
+                      <span className="text-[10px] text-[#737B89] flex items-center gap-0.5">
                         <Calendar className="w-2.5 h-2.5" />
                         {formatDate(item.eventDate || item.createdAt)}
                       </span>
                     </div>
 
-                    <h5 className="font-semibold text-slate-900 text-xs sm:text-sm truncate">
+                    <h5 className="font-semibold text-[#202B3C] text-xs sm:text-sm truncate">
                       {item.title}
                     </h5>
 
-                    <div className="flex items-center gap-2 text-[11px] text-slate-500 truncate">
+                    <div className="flex items-center gap-2 text-[11px] text-[#737B89] truncate">
                       <span className="flex items-center gap-0.5 truncate">
-                        <MapPin className="w-3 h-3 text-emerald-600 flex-shrink-0" />
+                        <MapPin className="w-3 h-3 text-[#4776E6] flex-shrink-0" />
                         <span className="truncate" title={formatItemLocation(item)}>{formatItemLocation(item)}</span>
                       </span>
                       <span className="text-slate-300">•</span>
                       <span className="flex items-center gap-0.5 flex-shrink-0">
-                        <Tag className="w-3 h-3 text-slate-400" />
+                        <Tag className="w-3 h-3 text-[#737B89]" />
                         <span>{item.category}</span>
                       </span>
                     </div>
@@ -217,7 +217,7 @@ export function ChatMessage({ message, onQuickReply, onNavigate }) {
                       <Link
                         to={`/item/${item.id}`}
                         onClick={onNavigate}
-                        className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 hover:text-emerald-800"
+                        className="inline-flex items-center gap-1 text-[11px] font-bold text-[#4776E6] hover:text-[#385ec7]"
                       >
                         <span>View Details</span>
                         <ArrowRight className="w-3 h-3" />
@@ -237,7 +237,7 @@ export function ChatMessage({ message, onQuickReply, onNavigate }) {
               <button
                 key={qIdx}
                 onClick={() => onQuickReply && onQuickReply(qr)}
-                className="text-[11px] font-medium bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200/80 px-2.5 py-1 rounded-full transition shadow-2xs"
+                className="text-[11px] font-medium bg-[#DDF4EE] hover:bg-[#c8ede4] text-[#202B3C] border border-[#bfebe0] px-2.5 py-1 rounded-full transition shadow-xs cursor-pointer"
               >
                 {qr}
               </button>
@@ -248,7 +248,7 @@ export function ChatMessage({ message, onQuickReply, onNavigate }) {
 
       {/* User Avatar */}
       {isUser && (
-        <div className="w-8 h-8 rounded-xl bg-slate-200 text-slate-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+        <div className="w-8 h-8 rounded-xl bg-[#DDF4EE] text-[#4776E6] flex items-center justify-center flex-shrink-0 mt-0.5">
           <User className="w-4 h-4" />
         </div>
       )}

@@ -77,17 +77,17 @@ export function Register() {
   const isSubmitting = loading || googleLoading;
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-6 bg-white p-8 sm:p-10 rounded-3xl border border-slate-200/80 shadow-xl">
+    <div className="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[#F8F7F4]">
+      <div className="max-w-md w-full space-y-6 bg-white p-8 sm:p-10 rounded-3xl border border-[#E8EAF0] shadow-xl clay-card">
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center text-white mx-auto shadow-md shadow-emerald-600/30">
-            <Compass className="w-7 h-7" />
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#4776E6] to-[#385ec7] flex items-center justify-center text-white mx-auto shadow-md shadow-[#4776E6]/30">
+            <Compass className="w-7 h-7 text-white" />
           </div>
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h2 className="text-2xl font-bold tracking-tight text-[#202B3C]">
             Create CampusFind Account
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500">
+          <p className="text-xs sm:text-sm text-[#737B89]">
             Connect with fellow students to report or claim lost items
           </p>
         </div>
@@ -109,10 +109,10 @@ export function Register() {
             type="button"
             onClick={handleGoogleSignIn}
             disabled={isSubmitting}
-            className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl border border-slate-300 hover:border-slate-400 bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold shadow-xs transition duration-150 disabled:opacity-50 cursor-pointer active:scale-[0.99]"
+            className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl border border-[#E8EAF0] hover:border-slate-300 bg-white hover:bg-slate-50 text-[#202B3C] text-sm font-semibold shadow-xs transition duration-150 disabled:opacity-50 cursor-pointer active:scale-[0.99]"
           >
             {googleLoading ? (
-              <div className="w-5 h-5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-5 h-5 border-2 border-[#4776E6] border-t-transparent rounded-full animate-spin"></div>
             ) : (
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path
@@ -140,10 +140,10 @@ export function Register() {
         {/* Divider */}
         <div className="relative my-4">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-200" />
+            <div className="w-full border-t border-[#E8EAF0]" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-3 text-slate-400 font-semibold tracking-wider">
+            <span className="bg-white px-3 text-[#737B89] font-semibold tracking-wider">
               Or register with email
             </span>
           </div>
@@ -152,11 +152,11 @@ export function Register() {
         {/* 2. Registration Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+            <label className="block text-xs font-semibold text-[#202B3C] mb-1.5">
               Full Name / Display Name
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#737B89]">
                 <User className="w-4 h-4" />
               </div>
               <input
@@ -166,17 +166,17 @@ export function Register() {
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 placeholder="Alex Student"
-                className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 disabled:opacity-50"
+                className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-[#E8EAF0] rounded-xl text-[#202B3C] text-sm focus:outline-none focus:ring-2 focus:ring-[#4776E6]/50 focus:border-[#4776E6] disabled:opacity-50"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+            <label className="block text-xs font-semibold text-[#202B3C] mb-1.5">
               Campus Email Address
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#737B89]">
                 <Mail className="w-4 h-4" />
               </div>
               <input
@@ -186,20 +186,20 @@ export function Register() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="student@campus.edu"
-                className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 disabled:opacity-50"
+                className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-[#E8EAF0] rounded-xl text-[#202B3C] text-sm focus:outline-none focus:ring-2 focus:ring-[#4776E6]/50 focus:border-[#4776E6] disabled:opacity-50"
               />
             </div>
-            <p className="text-[11px] text-slate-400 mt-1">
+            <p className="text-[11px] text-[#737B89] mt-1">
               Your email is kept private and never shown publicly on listings.
             </p>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+            <label className="block text-xs font-semibold text-[#202B3C] mb-1.5">
               Password (min. 6 characters)
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#737B89]">
                 <Lock className="w-4 h-4" />
               </div>
               <input
@@ -209,17 +209,17 @@ export function Register() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 disabled:opacity-50"
+                className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-[#E8EAF0] rounded-xl text-[#202B3C] text-sm focus:outline-none focus:ring-2 focus:ring-[#4776E6]/50 focus:border-[#4776E6] disabled:opacity-50"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+            <label className="block text-xs font-semibold text-[#202B3C] mb-1.5">
               Confirm Password
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#737B89]">
                 <Lock className="w-4 h-4" />
               </div>
               <input
@@ -229,7 +229,7 @@ export function Register() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 disabled:opacity-50"
+                className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-[#E8EAF0] rounded-xl text-[#202B3C] text-sm focus:outline-none focus:ring-2 focus:ring-[#4776E6]/50 focus:border-[#4776E6] disabled:opacity-50"
               />
             </div>
           </div>
@@ -237,7 +237,7 @@ export function Register() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full mt-2 inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 shadow-sm shadow-emerald-600/30 transition duration-150 disabled:opacity-50 cursor-pointer"
+            className="w-full mt-2 inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-[#4776E6] hover:bg-[#385ec7] active:bg-[#2b47a8] shadow-sm shadow-[#4776E6]/30 transition duration-150 disabled:opacity-50 cursor-pointer"
           >
             {loading ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -251,9 +251,9 @@ export function Register() {
         </form>
 
         {/* Switch to Sign In */}
-        <div className="text-center text-xs text-slate-500">
+        <div className="text-center text-xs text-[#737B89]">
           Already have an account?{' '}
-          <Link to="/login" className="font-semibold text-emerald-600 hover:text-emerald-700">
+          <Link to="/login" className="font-semibold text-[#4776E6] hover:underline">
             Sign In here
           </Link>
         </div>

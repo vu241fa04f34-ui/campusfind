@@ -301,27 +301,27 @@ export function AuthorityDashboard() {
   const resolvedComplaints = complaints.filter((c) => c.status === 'resolved');
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-[#F8F7F4] flex flex-col md:flex-row">
       {/* Sidebar Navigation */}
-      <aside className="w-full md:w-64 bg-indigo-950 text-white shrink-0 flex flex-col border-r border-indigo-900">
-        <div className="p-5 border-b border-indigo-900/80 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-indigo-900 text-indigo-400 flex items-center justify-center border border-indigo-800 shadow-inner">
+      <aside className="w-full md:w-64 bg-white text-[#202B3C] shrink-0 flex flex-col border-r border-[#E8EAF0]">
+        <div className="p-5 border-b border-[#E8EAF0] flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-[#4776E6]/10 text-[#4776E6] flex items-center justify-center border border-[#4776E6]/20 shadow-xs">
             <Shield className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-sm font-extrabold tracking-tight text-white">Campus Authority</h2>
-            <p className="text-[10px] text-indigo-300 font-medium">Vignan Staff Portal</p>
+            <h2 className="text-sm font-extrabold tracking-tight text-[#202B3C]">Campus Authority</h2>
+            <p className="text-[10px] text-[#737B89] font-medium">Vignan Staff Portal</p>
           </div>
         </div>
 
         {/* User Card */}
-        <div className="p-4 mx-3 my-3 rounded-2xl bg-indigo-900/50 border border-indigo-800/80 text-xs space-y-1">
-          <p className="font-bold text-white truncate">
+        <div className="p-4 mx-3 my-3 rounded-2xl bg-[#F8F7F4] border border-[#E8EAF0] text-xs space-y-1">
+          <p className="font-bold text-[#202B3C] truncate">
             {currentUser?.displayName || currentUser?.email?.split('@')[0] || 'Campus Staff'}
           </p>
-          <p className="text-[11px] text-indigo-300 truncate">{currentUser?.email}</p>
+          <p className="text-[11px] text-[#737B89] truncate">{currentUser?.email}</p>
           <div className="pt-1">
-            <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-indigo-800 text-indigo-200">
+            <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#DDF4EE] text-[#202B3C] border border-[#bfebe0]">
               Staff Clearance
             </span>
           </div>
@@ -331,26 +331,26 @@ export function AuthorityDashboard() {
         <nav className="flex-1 px-3 py-2 space-y-1 text-xs font-semibold">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition ${
+            className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition cursor-pointer ${
               activeTab === 'overview'
-                ? 'bg-indigo-900 text-white shadow-sm'
-                : 'text-indigo-200 hover:bg-indigo-900/60 hover:text-white'
+                ? 'bg-[#4776E6] text-white shadow-sm'
+                : 'text-[#737B89] hover:bg-slate-100 hover:text-[#202B3C]'
             }`}
           >
-            <Package className="w-4 h-4 text-indigo-400" />
+            <Package className="w-4 h-4" />
             <span>Overview &amp; Metrics</span>
           </button>
 
           <button
             onClick={() => setActiveTab('complaints')}
-            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition ${
+            className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition cursor-pointer ${
               activeTab === 'complaints'
-                ? 'bg-indigo-900 text-white shadow-sm'
-                : 'text-indigo-200 hover:bg-indigo-900/60 hover:text-white'
+                ? 'bg-[#4776E6] text-white shadow-sm'
+                : 'text-[#737B89] hover:bg-slate-100 hover:text-[#202B3C]'
             }`}
           >
             <div className="flex items-center gap-2.5">
-              <AlertTriangle className="w-4 h-4 text-amber-400" />
+              <AlertTriangle className="w-4 h-4" />
               <span>Assigned &amp; Open Cases</span>
             </div>
             {openComplaintsCount > 0 && (
@@ -362,46 +362,46 @@ export function AuthorityDashboard() {
 
           <button
             onClick={() => setActiveTab('items')}
-            className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition ${
+            className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition cursor-pointer ${
               activeTab === 'items'
-                ? 'bg-indigo-900 text-white shadow-sm'
-                : 'text-indigo-200 hover:bg-indigo-900/60 hover:text-white'
+                ? 'bg-[#4776E6] text-white shadow-sm'
+                : 'text-[#737B89] hover:bg-slate-100 hover:text-[#202B3C]'
             }`}
           >
-            <FileText className="w-4 h-4 text-emerald-400" />
+            <FileText className="w-4 h-4" />
             <span>All Authorized Items</span>
           </button>
 
           <button
             onClick={() => setActiveTab('resolved')}
-            className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition ${
+            className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition cursor-pointer ${
               activeTab === 'resolved'
-                ? 'bg-indigo-900 text-white shadow-sm'
-                : 'text-indigo-200 hover:bg-indigo-900/60 hover:text-white'
+                ? 'bg-[#4776E6] text-white shadow-sm'
+                : 'text-[#737B89] hover:bg-slate-100 hover:text-[#202B3C]'
             }`}
           >
-            <CheckCircle className="w-4 h-4 text-teal-400" />
+            <CheckCircle className="w-4 h-4" />
             <span>Resolved Cases</span>
           </button>
 
           <button
             onClick={() => setActiveTab('activity')}
-            className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition ${
+            className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition cursor-pointer ${
               activeTab === 'activity'
-                ? 'bg-indigo-900 text-white shadow-sm'
-                : 'text-indigo-200 hover:bg-indigo-900/60 hover:text-white'
+                ? 'bg-[#4776E6] text-white shadow-sm'
+                : 'text-[#737B89] hover:bg-slate-100 hover:text-[#202B3C]'
             }`}
           >
-            <Clock className="w-4 h-4 text-indigo-400" />
+            <Clock className="w-4 h-4" />
             <span>My Activity Log</span>
           </button>
         </nav>
 
         {/* Footer Logout */}
-        <div className="p-3 border-t border-indigo-900/80">
+        <div className="p-3 border-t border-[#E8EAF0]">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-rose-300 hover:bg-rose-950/40 hover:text-rose-200 transition text-xs font-semibold"
+            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-rose-600 hover:bg-rose-50 transition text-xs font-semibold cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
             <span>Sign Out</span>

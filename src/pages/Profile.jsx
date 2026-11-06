@@ -86,66 +86,66 @@ export function Profile() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       {/* Profile Header Card */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-6 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start gap-6">
+      <div className="clay-card bg-white rounded-3xl border border-[#E8EAF0] shadow-sm p-6 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start gap-6">
         {currentUser?.photoURL ? (
           <img
             src={currentUser.photoURL}
             alt={currentUser.displayName || 'Profile'}
-            className="w-24 h-24 rounded-2xl object-cover border-2 border-emerald-400 shadow-md flex-shrink-0"
+            className="w-24 h-24 rounded-2xl object-cover border-2 border-[#4776E6] shadow-md flex-shrink-0"
           />
         ) : (
-          <div className="w-24 h-24 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center text-3xl font-bold shadow-md flex-shrink-0">
+          <div className="w-24 h-24 rounded-2xl bg-gradient-to-tr from-[#4776E6] to-[#688ff0] text-white flex items-center justify-center text-3xl font-bold shadow-md flex-shrink-0">
             {currentUser?.displayName ? currentUser.displayName[0].toUpperCase() : <User className="w-12 h-12" />}
           </div>
         )}
 
         <div className="flex-1 text-center sm:text-left space-y-2">
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+            <h1 className="text-2xl font-bold text-[#202B3C] tracking-tight">
               {currentUser?.displayName || 'Campus Student'}
             </h1>
 
             {/* University Verification Badge */}
             {isVignanVerified ? (
-              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-xs">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-[#DDF4EE] text-[#202B3C] border border-[#bfebe0] shadow-xs">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#4776E6]" />
                 <span>Verified Vignan Student</span>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200">
-                <ShieldAlert className="w-3.5 h-3.5 text-slate-400" />
+              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-[#F8F7F4] text-[#737B89] border border-[#E8EAF0]">
+                <ShieldAlert className="w-3.5 h-3.5 text-[#737B89]" />
                 <span>Standard Account</span>
               </span>
             )}
 
             {/* Role Badge */}
             {role === 'admin' && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-800 border border-purple-300">
-                <Shield className="w-3 h-3 text-purple-600" />
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-[#DDF4EE] text-[#4776E6] border border-[#bfebe0]">
+                <Shield className="w-3 h-3 text-[#4776E6]" />
                 <span>Campus Admin</span>
               </span>
             )}
           </div>
 
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-[#737B89]">
             Vignan University, Guntur • CampusFind Community Member
           </p>
 
-          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 pt-1 text-xs text-slate-600">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 pt-1 text-xs text-[#737B89]">
             {currentUser?.email && (
               <span className="flex items-center gap-1.5">
-                <Mail className="w-3.5 h-3.5 text-slate-400" />
+                <Mail className="w-3.5 h-3.5 text-[#737B89]" />
                 {currentUser.email}
               </span>
             )}
             {currentUser?.phoneNumber && (
               <span className="flex items-center gap-1.5">
-                <Phone className="w-3.5 h-3.5 text-slate-400" />
+                <Phone className="w-3.5 h-3.5 text-[#737B89]" />
                 {currentUser.phoneNumber}
               </span>
             )}
             <span className="flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5 text-slate-400" />
+              <Calendar className="w-3.5 h-3.5 text-[#737B89]" />
               Active Member
             </span>
           </div>
@@ -154,14 +154,14 @@ export function Profile() {
         <div className="flex flex-col gap-2 w-full sm:w-auto">
           <Link
             to="/dashboard"
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-[#202B3C] bg-[#F8F7F4] hover:bg-[#E8EAF0] transition border border-[#E8EAF0]"
           >
-            <LayoutDashboard className="w-4 h-4 text-emerald-600" />
+            <LayoutDashboard className="w-4 h-4 text-[#4776E6]" />
             <span>Go to Dashboard</span>
           </Link>
           <Link
             to="/report"
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm transition"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-white bg-[#4776E6] hover:bg-[#385ec7] shadow-sm transition"
           >
             <PlusCircle className="w-4 h-4" />
             <span>Report an Item</span>
@@ -171,51 +171,51 @@ export function Profile() {
 
       {/* Overview Statistics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-xl">
+        <div className="clay-card bg-white rounded-2xl border border-[#E8EAF0] p-5 shadow-xs flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-[#DDF4EE] text-[#4776E6] flex items-center justify-center font-bold text-xl">
             {stats.reported}
           </div>
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Reported</p>
-            <p className="text-sm font-semibold text-slate-800">Items posted by you</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[#737B89]">Total Reported</p>
+            <p className="text-sm font-semibold text-[#202B3C]">Items posted by you</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-xl">
+        <div className="clay-card bg-white rounded-2xl border border-[#E8EAF0] p-5 shadow-xs flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-[#DDF4EE] text-[#4776E6] flex items-center justify-center font-bold text-xl">
             {stats.claims}
           </div>
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Claims &amp; Messages</p>
-            <p className="text-sm font-semibold text-slate-800">Recovery interactions</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[#737B89]">Claims &amp; Messages</p>
+            <p className="text-sm font-semibold text-[#202B3C]">Recovery interactions</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center font-bold text-xl">
+        <div className="clay-card bg-white rounded-2xl border border-[#E8EAF0] p-5 shadow-xs flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-[#DDF4EE] text-[#4776E6] flex items-center justify-center font-bold text-xl">
             {stats.resolved}
           </div>
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Returned Safely</p>
-            <p className="text-sm font-semibold text-slate-800">Reunited belongings</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[#737B89]">Returned Safely</p>
+            <p className="text-sm font-semibold text-[#202B3C]">Reunited belongings</p>
           </div>
         </div>
       </div>
 
       {/* Academic & Verification Details Form */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-6 sm:p-8 space-y-6">
+      <div className="clay-card bg-white rounded-3xl border border-[#E8EAF0] shadow-sm p-6 sm:p-8 space-y-6">
         <div>
-          <h2 className="text-lg font-bold text-slate-900 tracking-tight">
+          <h2 className="text-lg font-bold text-[#202B3C] tracking-tight">
             Academic &amp; Student Details
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+          <p className="text-xs sm:text-sm text-[#737B89] mt-0.5">
             Keep your department and student ID updated to expedite recovery handoffs.
           </p>
         </div>
 
         {saveSuccess && (
-          <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+          <div className="p-3.5 rounded-xl bg-[#DDF4EE] border border-[#bfebe0] text-[#202B3C] text-xs sm:text-sm flex items-center gap-2">
+            <CheckCircle className="w-4 h-4 text-[#4776E6] flex-shrink-0" />
             <span>Profile information updated successfully!</span>
           </div>
         )}
@@ -223,8 +223,8 @@ export function Profile() {
         <form onSubmit={handleSaveProfile} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="prof-dept" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
-                <Building2 className="w-3.5 h-3.5 text-slate-400" />
+              <label htmlFor="prof-dept" className="block text-xs font-bold uppercase tracking-wider text-[#202B3C] mb-1.5 flex items-center gap-1.5">
+                <Building2 className="w-3.5 h-3.5 text-[#737B89]" />
                 <span>Department / Branch</span>
               </label>
               <input
@@ -233,13 +233,13 @@ export function Profile() {
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
                 placeholder="e.g. Computer Science & Engineering (CSE)"
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                className="w-full px-4 py-2.5 bg-[#F8F7F4] border border-[#E8EAF0] rounded-xl text-[#202B3C] text-sm focus:outline-none focus:ring-2 focus:ring-[#4776E6]/40"
               />
             </div>
 
             <div>
-              <label htmlFor="prof-id" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
-                <IdCard className="w-3.5 h-3.5 text-slate-400" />
+              <label htmlFor="prof-id" className="block text-xs font-bold uppercase tracking-wider text-[#202B3C] mb-1.5 flex items-center gap-1.5">
+                <IdCard className="w-3.5 h-3.5 text-[#737B89]" />
                 <span>Vignan Student Roll / ID No.</span>
               </label>
               <input
@@ -248,27 +248,27 @@ export function Profile() {
                 value={studentId}
                 onChange={(e) => setStudentId(e.target.value)}
                 placeholder="e.g. 211FA04001"
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                className="w-full px-4 py-2.5 bg-[#F8F7F4] border border-[#E8EAF0] rounded-xl text-[#202B3C] text-sm focus:outline-none focus:ring-2 focus:ring-[#4776E6]/40"
               />
             </div>
           </div>
 
           {/* Development / Evaluation Access Role Toggle */}
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+          <div className="p-4 rounded-2xl bg-[#F8F7F4] border border-[#E8EAF0] space-y-2">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+                <p className="text-xs font-bold uppercase tracking-wider text-[#202B3C] flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-[#4776E6]" />
                   <span>Evaluation &amp; Role Setting</span>
                 </p>
-                <p className="text-[11px] text-slate-500 mt-0.5">
+                <p className="text-[11px] text-[#737B89] mt-0.5">
                   Toggle Administrator role to review and evaluate the Admin Dashboard.
                 </p>
               </div>
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                className="text-xs font-semibold px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-slate-800 cursor-pointer"
+                className="text-xs font-semibold px-3 py-1.5 bg-white border border-[#E8EAF0] rounded-lg text-[#202B3C] cursor-pointer"
               >
                 <option value="student">Student Account</option>
                 <option value="admin">Campus Administrator</option>
@@ -280,7 +280,7 @@ export function Profile() {
             <button
               type="submit"
               disabled={saving}
-              className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 shadow-sm transition disabled:opacity-50"
+              className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#4776E6] hover:bg-[#385ec7] active:bg-[#2e52b2] shadow-sm transition disabled:opacity-50 cursor-pointer"
             >
               {saving ? 'Saving...' : 'Save Profile Changes'}
             </button>

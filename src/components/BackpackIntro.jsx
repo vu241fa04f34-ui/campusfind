@@ -805,12 +805,12 @@ export function BackpackIntro({ onGetStarted }) {
 
       {/* Top Header: CampusFind Brand Pill & Skip Intro Option */}
       <div className="absolute top-5 left-5 right-5 flex items-center justify-between z-20 pointer-events-auto">
-        <div className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-slate-900/80 border border-emerald-500/30 backdrop-blur-md shadow-lg shadow-emerald-950/40">
-          <div className="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center">
-            <Compass className="w-3.5 h-3.5 text-emerald-400" />
+        <div className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#E8EAF0] backdrop-blur-md shadow-lg">
+          <div className="w-6 h-6 rounded-lg bg-[#4776E6]/10 border border-[#4776E6]/30 flex items-center justify-center">
+            <Compass className="w-3.5 h-3.5 text-[#4776E6]" />
           </div>
-          <span className="text-xs sm:text-sm font-bold tracking-tight text-white">CampusFind</span>
-          <span className="hidden sm:inline-block text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300">
+          <span className="text-xs sm:text-sm font-bold tracking-tight text-[#202B3C]">CampusFind</span>
+          <span className="hidden sm:inline-block text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#DDF4EE] text-[#202B3C] border border-[#bfebe0]">
             Lost &amp; Found
           </span>
         </div>
@@ -819,7 +819,7 @@ export function BackpackIntro({ onGetStarted }) {
         {phase !== 'final' && (
           <button
             onClick={handleSkipIntro}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-300 bg-slate-900/70 hover:bg-slate-800/90 border border-slate-700/60 hover:border-emerald-500/50 backdrop-blur-md transition-all shadow-md hover:text-white"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-[#202B3C] bg-white/90 hover:bg-white border border-[#E8EAF0] hover:border-[#4776E6]/50 backdrop-blur-md transition-all shadow-md cursor-pointer"
           >
             <span>Skip Intro</span>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -844,15 +844,15 @@ export function BackpackIntro({ onGetStarted }) {
                 opacity: label.opacity
               }}
             >
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-950/85 border border-emerald-500/40 backdrop-blur-md shadow-xl shadow-emerald-950/60 text-white transform hover:scale-105 transition-transform">
-                <div className="w-5 h-5 rounded-md bg-emerald-500/25 flex items-center justify-center text-emerald-300 flex-shrink-0">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/95 border border-[#E8EAF0] backdrop-blur-md shadow-xl text-[#202B3C] transform hover:scale-105 transition-transform">
+                <div className="w-5 h-5 rounded-md bg-[#4776E6]/10 flex items-center justify-center text-[#4776E6] flex-shrink-0">
                   <IconComponent className="w-3 h-3" />
                 </div>
                 <div className="flex flex-col text-left">
-                  <span className="text-xs sm:text-sm font-semibold tracking-tight text-emerald-100 whitespace-nowrap leading-none">
+                  <span className="text-xs sm:text-sm font-semibold tracking-tight text-[#202B3C] whitespace-nowrap leading-none">
                     {item.name}
                   </span>
-                  <span className="text-[9px] uppercase tracking-wider text-emerald-400/80 font-medium leading-none mt-1">
+                  <span className="text-[9px] uppercase tracking-wider text-[#737B89] font-medium leading-none mt-1">
                     {item.category}
                   </span>
                 </div>
@@ -865,28 +865,28 @@ export function BackpackIntro({ onGetStarted }) {
       {/* Sequence 4: Directly Transition to Final Get Started Screen */}
       {phase === 'final' && (
         <div className="absolute inset-0 flex items-center justify-center z-30 px-4 animate-fade-in pointer-events-auto">
-          <div className="w-full max-w-lg p-8 sm:p-10 rounded-3xl bg-slate-950/80 border border-emerald-500/35 backdrop-blur-xl shadow-2xl shadow-emerald-950/80 text-center space-y-6 transform animate-scale-in">
+          <div className="clay-card w-full max-w-lg p-8 sm:p-10 rounded-3xl bg-white/95 border border-[#E8EAF0] backdrop-blur-xl shadow-2xl text-center space-y-6 transform animate-scale-in">
             {/* CampusFind Logo & Badge */}
-            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 text-xs sm:text-sm font-semibold shadow-xs">
-              <Sparkles className="w-4 h-4 text-emerald-400" />
+            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#DDF4EE] border border-[#bfebe0] text-[#202B3C] text-xs sm:text-sm font-semibold shadow-xs">
+              <Sparkles className="w-4 h-4 text-[#4776E6]" />
               <span>Vignan University • Campus Lost &amp; Found</span>
             </div>
 
             {/* CampusFind Title */}
             <div className="space-y-2">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-200">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#202B3C]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4776E6] via-[#385ec7] to-[#202B3C]">
                   CampusFind
                 </span>
               </h1>
 
               {/* Tagline */}
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-100 tracking-tight">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#202B3C] tracking-tight">
                 Lost Something? Let's Find It!
               </h2>
 
               {/* Slogan */}
-              <p className="text-sm sm:text-base text-slate-300 font-normal max-w-sm mx-auto leading-relaxed">
+              <p className="text-sm sm:text-base text-[#737B89] font-normal max-w-sm mx-auto leading-relaxed">
                 Your campus. Your community. Your belongings.
               </p>
             </div>
@@ -895,20 +895,20 @@ export function BackpackIntro({ onGetStarted }) {
             <div className="pt-2 flex flex-col items-center gap-3">
               <button
                 onClick={handleGetStartedClick}
-                className="group relative w-full sm:w-auto min-w-[260px] inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl text-base sm:text-lg font-extrabold text-white bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 shadow-xl shadow-emerald-500/40 hover:shadow-emerald-500/70 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 border border-emerald-400/50 cursor-pointer overflow-hidden"
+                className="group relative w-full sm:w-auto min-w-[260px] inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl text-base sm:text-lg font-extrabold text-white bg-gradient-to-r from-[#4776E6] via-[#385ec7] to-[#2b47a8] shadow-xl shadow-[#4776E6]/40 hover:shadow-[#4776E6]/70 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 border border-[#4776E6]/50 cursor-pointer overflow-hidden"
               >
                 <span className="relative z-10 flex items-center gap-2 tracking-wide">
                   <span>GET STARTED</span>
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform duration-200" />
                 </span>
                 {/* Shimmer pulse effect */}
-                <span className="absolute inset-0 bg-gradient-to-r from-emerald-400/0 via-white/25 to-emerald-400/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/25 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
               </button>
 
               {/* Skip / Direct Sign In Option */}
               <button
                 onClick={handleGetStartedClick}
-                className="text-xs text-slate-400 hover:text-emerald-300 transition-colors py-1 cursor-pointer flex items-center gap-1"
+                className="text-xs text-[#737B89] hover:text-[#4776E6] transition-colors py-1 cursor-pointer flex items-center gap-1"
               >
                 <span>Continue directly to Sign In</span>
                 <ChevronRight className="w-3.5 h-3.5" />
